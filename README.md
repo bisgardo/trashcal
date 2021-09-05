@@ -1,7 +1,7 @@
 # trashcal
 
-Tool for inserting trash pickup dates for Danish address into a calendar in Google Calendar.
-The inserted events are "all-day" and use the default notification settings for the given calendar.
+Tool for inserting trash pickup dates for a given Danish address into a given calendar in Google Calendar.
+The inserted events are "all-day" and use the default notification settings for the calendar.
 
 While a significantly less than great deal of time has been spent polishing this project,
 it's pretty simple to use: Complete instructions are provided below.
@@ -17,7 +17,7 @@ while also removing hardcoded personal information.
 
 The tool consists of a few Bash and Python scripts.
 
-The Python part is installed by creating a virtualenv in the `script` folder
+The Python dependencies are installed by creating a virtualenv in the `script` folder
 and invoking the command `pip install -r requirements.txt`.
 
 ## Usage
