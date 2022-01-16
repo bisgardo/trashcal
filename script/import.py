@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from __future__ import print_function
+#from __future__ import print_function
 import datetime
 import pickle
+import os
 import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -11,9 +12,8 @@ from google.auth.transport.requests import Request
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
-# TODO Load from env var or script args.
-CALENDAR_ID = ...
-YEAR = ...
+CALENDAR_ID = os.getenv('CALENDAR_ID')
+YEAR = os.getenv('YEAR')
 
 def init_service():
     creds = None
