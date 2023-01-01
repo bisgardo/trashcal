@@ -1,4 +1,4 @@
-.*
-!.gitignore
-*.txt
-*.html
+/__pycache__/
+/venv/
+credentials.json*
+token.pickle*
