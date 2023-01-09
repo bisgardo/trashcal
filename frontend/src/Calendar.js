@@ -20,7 +20,7 @@ export function Calendar({ addressId, year }) {
             });
 
         return () => abortController.abort(); // not sure why, but returning raw function doesn't work
-    }, [addressId]);
+    }, [addressId, year]);
 
     console.log(data);
     return (

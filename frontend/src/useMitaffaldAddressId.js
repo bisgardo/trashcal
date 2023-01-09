@@ -9,14 +9,15 @@ function addressUrlFromDawa({ vejnavn, husnr, postnr, postnrnavn }) {
     return url;
 }
 
+const INIT_STATE = { addressId: undefined, addressError: '' };
+
 export function useMitaffaldAddressId(dawaAddress) {
-    const initState = { addressId: undefined, addressError: '' };
-    const [state, setState] = useState(initState);
+    const [state, setState] = useState(INIT_STATE);
     useEffect(() => {
         if (dawaAddress) {
             const url = addressUrlFromDawa(dawaAddress.data);
             const abortController = new AbortController();
-            setState(initState);
+            setState(INIT_STATE);
             fetch(url, abortController)
                 .then((res) => res.text())
                 .then((res) => setState({ addressId: res, addressError: '' }))
