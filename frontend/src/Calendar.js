@@ -10,7 +10,7 @@ export function Calendar({ addressId, year }) {
         const abortController = new AbortController();
         fetch(url, abortController)
             .then((res) => res.json())
-            .then(res => {
+            .then((res) => {
                 setData(res);
                 setFetchError('');
             })
@@ -21,8 +21,6 @@ export function Calendar({ addressId, year }) {
 
         return () => abortController.abort(); // not sure why, but returning raw function doesn't work
     }, [addressId, year]);
-
-    console.log(data);
     return (
         <>
             <pre>{data && JSON.stringify(data, null, 2)}</pre>

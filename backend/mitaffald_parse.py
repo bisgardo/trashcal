@@ -2,9 +2,7 @@ from bs4 import BeautifulSoup
 import re
 from datetime import date
 
-# The two types of dates.
-rest_text = 'Restaffald'
-genanv_text = 'Genanvendeligt affald (Glas plast metal og papir pap)'
+from mitaffald_const import genanv_text, rest_text
 
 
 def map_to_dates(strs, year):

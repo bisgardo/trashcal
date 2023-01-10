@@ -4,9 +4,6 @@ from flask_cors import CORS
 from mitaffald_fetch import fetch_address, fetch_calendar_html
 from mitaffald_parse import parse_calendar
 
-# import http
-# http.client.HTTPConnection.debuglevel = 1
-
 
 app = Flask(__name__)
 # TODO Restrict to our own frontend?
