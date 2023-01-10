@@ -22,7 +22,7 @@ export function useMitaffaldAddressId(dawaAddress) {
                 .then((res) => res.text())
                 .then((res) => setState({ addressId: res, addressError: '' }))
                 .catch((e) => setState({ addressId: undefined, addressError: e.message }));
-            return () => abortController.abort(); // not sure why, but returning raw function doesn't work
+            return () => abortController.abort(); // not sure why, but returning raw function (even when binding 'this') doesn't work
         }
     }, [dawaAddress]);
     return state;

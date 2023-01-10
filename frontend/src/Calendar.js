@@ -19,7 +19,7 @@ export function Calendar({ addressId, year }) {
                 setFetchError(e.message);
             });
 
-        return () => abortController.abort(); // not sure why, but returning raw function doesn't work
+        return () => abortController.abort(); // not sure why, but returning raw function (even when binding 'this') doesn't work
     }, [addressId, year]);
     return (
         <>
