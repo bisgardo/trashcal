@@ -24,7 +24,6 @@ def fetch_address(postcode_str, street_address_text, house_number_str):
 def fetch_calendar_html(address_id, year):
     url = 'https://mitaffald.affaldvarme.dk/Adresse/ToemmekalenderContent'
     cookies = {'AddressId': address_id}
-    # TODO Additional known filter values: "Papir pap", "Glas plast metal".
     data = {'filterValues': [rest_text, genanv_text], 'year': year}
     headers = {'Content-Type': 'application/json; charset=utf-8'}
     r = requests.post(url, headers=headers, cookies=cookies, data=json.dumps(data))

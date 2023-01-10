@@ -6,8 +6,7 @@ from mitaffald_parse import parse_calendar
 
 
 app = Flask(__name__)
-# TODO Restrict to our own frontend?
-CORS(app)  # accepts all origins
+CORS(app)  # accept any origin
 
 
 # TODO Validate inputs and handle errors.
