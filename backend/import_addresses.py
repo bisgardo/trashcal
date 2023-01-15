@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 from app import app
-from mitaffald_fetch import fetch_address
-from db import lookup_address
+from resolve import resolve_address
 
 import gzip
 from json import load
@@ -22,12 +21,12 @@ with app.app_context():
         postcode = addr['postnr']
         postcode_name = addr['postnrnavn']
         try:
-            _, status = lookup_address(street_name, house_number, postcode,
-                                       lambda: fetch_address(street_name, house_number, postcode, postcode_name))
-            # if status:
-            #     print('cache hit', flush=True)
-            # else:
-            #     print('cache missed', flush=True)
-        except:
-            print('no match for', street_name, house_number, postcode, postcode_name)
+            _, status = resolve_address(street_name, house_number, postcode, postcode_name)
+            if status:
+                # print('cache hit', flush=True)
+                pass
+            else:
+                print('cache missed', flush=True)
+        except Exception as e:
+            print('no match for', street_name, house_number, postcode, postcode_name, e)
             pass

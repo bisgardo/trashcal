@@ -19,7 +19,12 @@ export function useMitaffaldAddressId(dawaAddress) {
             const abortController = new AbortController();
             setState(INIT_STATE);
             fetch(url, abortController)
-                .then((res) => res.text())
+                .then((res) => {
+                    if (res.status !== 200) {
+                        throw new Error(`address lookup failed with HTTP status ${res.status} ${res.statusText}`);
+                    }
+                    return res.text();
+                })
                 .then((res) => setState({ addressId: res, addressError: '' }))
                 .catch((e) => setState({ addressId: undefined, addressError: e.message }));
             return () => abortController.abort(); // not sure why, but returning raw function (even when binding 'this') doesn't work

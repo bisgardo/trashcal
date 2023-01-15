@@ -18,6 +18,14 @@ key_map = {
 }
 
 
+def parse_types(html):
+    soup = BeautifulSoup(html, 'html.parser')
+    select = soup.find(id='myaffaldstype')
+    if select is None:
+        return None
+    return [t.text for t in select.find_all('option')]
+
+
 def parse_calendar(html, year_int):
     soup = BeautifulSoup(html, 'html.parser')
     tables = soup.find_all('tbody')

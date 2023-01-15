@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
-from flask import Flask, request
+from flask import Flask, request, abort
 from flask_cors import CORS
 
-from db import db, lookup_address, lookup_calendar
-from mitaffald_fetch import fetch_address, fetch_calendar_html
-from mitaffald_parse import parse_calendar
+from db import db
+from resolve import resolve_address, resolve_calendar
 
 app = Flask(__name__)
 CORS(app)  # accept any origin
@@ -26,8 +25,9 @@ def address():
     house_number = query_params['house_number']
     postcode = query_params['postcode']
     postcode_name = query_params['postcode_name']
-    res, _ = lookup_address(street_name, house_number, postcode,
-                            lambda: fetch_address(street_name, house_number, postcode, postcode_name))
+    res, _ = resolve_address(street_name, house_number, postcode, postcode_name)
+    if not res:
+        abort(404)
     return res
 
 
@@ -35,6 +35,7 @@ def address():
 def trash_calendar(address_id):
     query_params = request.args
     year = query_params['year']
-    res, _ = lookup_calendar(address_id, year, lambda: fetch_calendar_html(address_id, year),
-                             lambda html: parse_calendar(html, int(year)))
+    res, _ = resolve_calendar(address_id, year)
+    if not res:
+        abort(404)
     return res

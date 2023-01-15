@@ -1,6 +1,5 @@
 import json
 import requests
-from flask import abort
 
 from mitaffald_const import genanv_text, rest_text
 
@@ -19,7 +18,14 @@ def fetch_address(street_name, house_number_str, postcode_str, postcode_name):
     for address in addresses:
         if address['Husnr'] == house_number_str:
             return address['Id']
-    abort(404)
+    return None
+
+
+def fetch_types_html(address_id, year):
+    url = f'https://mitaffald.affaldvarme.dk/Adresse/Toemmekalender?year={year}'
+    cookies = {'AddressId': address_id}
+    r = requests.get(url, cookies=cookies)
+    return r.text
 
 
 def fetch_calendar_html(address_id, year):
