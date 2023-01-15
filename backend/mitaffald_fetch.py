@@ -5,7 +5,8 @@ from flask import abort
 from mitaffald_const import genanv_text, rest_text
 
 
-def fetch_address(postcode_str, street_address_text, house_number_str):
+def fetch_address(street_name, house_number_str, postcode_str, postcode_name):
+    street_address_text = f'{street_name}, {postcode_str} {postcode_name}'
     r = requests.get('https://mitaffald.affaldvarme.dk/Adresse/AddressesFromCodeByNumber', params={
         'term': house_number_str,
         'postnr': postcode_str,

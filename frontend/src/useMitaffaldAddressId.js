@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
 function addressUrlFromDawa({ vejnavn, husnr, postnr, postnrnavn }) {
-    const text = `${vejnavn}, ${postnr} ${postnrnavn}`;
     const url = new URL('http://localhost:5000/lookup_address_id');
+    url.searchParams.append('street_name', vejnavn);
     url.searchParams.append('house_number', husnr);
     url.searchParams.append('postcode', postnr);
-    url.searchParams.append('street_address_text', text);
+    url.searchParams.append('postcode_name', postnrnavn);
     return url;
 }
 

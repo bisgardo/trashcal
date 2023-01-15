@@ -12,13 +12,19 @@ def map_to_dates(strs, year):
     return [to_date(s) for s in strs]
 
 
+key_map = {
+    rest_text: 'restaffald',
+    genanv_text: 'genanvendeligt_affald'
+}
+
+
 def parse_calendar(html, year_int):
     soup = BeautifulSoup(html, 'html.parser')
     tables = soup.find_all('tbody')
     # The response comes in three separate tables.
     col_months = [
-        [1, 2, 3, 4],    # table1 cols: jan-apr
-        [5, 6, 7, 8],    # table2 cols: maj-aug
+        [1, 2, 3, 4],  # table1 cols: jan-apr
+        [5, 6, 7, 8],  # table2 cols: maj-aug
         [9, 10, 11, 12]  # table3 cols: sep-dec
     ]
     res = {
@@ -38,5 +44,5 @@ def parse_calendar(html, year_int):
                 # Extract type and day from the line and append it to res.
                 m = re.match(r'(.*): \w+ (\d+)\.', l)
                 (type, day) = m.groups()
-                res[type].append(date(year_int, month, int(day.lstrip('0'))))
-    return res[rest_text], res[genanv_text]
+                res[type].append(date(year_int, month, int(day.lstrip('0'))).strftime('%Y-%m-%d'))
+    return {key_map[k]: v for (k, v) in res.items()}, 1
