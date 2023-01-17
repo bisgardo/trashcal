@@ -2,9 +2,11 @@ import './dawa.scss';
 import { useRef } from 'react';
 import { useDawaAutocomplete } from './useDawaAutocomplete';
 import { useMitaffaldAddressId } from './useMitaffaldAddressId';
-import { Calendar } from './Calendar';
+import { AddressCalendar } from './AddressCalendar';
 
 const YEAR = 2023;
+const IS_LEAP_YEAR = false;
+const FIRST_WEEKDAY_INDEX = 6; // Sunday
 
 export default function App() {
     const inputRef = useRef(null);
@@ -36,7 +38,7 @@ export default function App() {
                 )}
             </p>
             <hr />
-            {addressId && <Calendar addressId={addressId} year={YEAR} />}
+            {addressId && <AddressCalendar addressId={addressId} year={YEAR} isLeapYear={IS_LEAP_YEAR} firstWeekdayIndex={FIRST_WEEKDAY_INDEX} />}
             {addressError && <div>Address error: {addressError}</div>}
         </div>
     );
