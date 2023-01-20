@@ -10,7 +10,6 @@ it's pretty simple to use: Complete instructions are provided below.
 
 The project has been used once a year since Mar 2019; evolving a little each time.
 It was last used in Jan 2023, where it was rewritten to a single Python script.
-It has not been verified that all the instructions below are still correct.
 
 ## Install
 
@@ -53,7 +52,7 @@ Deactivate using the command `deactivate` when done or just exit the shell.
     and set the environment variable `TRASHCAL_CALENDAR_ID` to this value:
 
     ```shell
-    $ export TRASHCAL_CALENDAR_ID=... # copy/paste from Google Calendar
+    $ export TRASHCAL_GOOGLE_CALENDAR_ID=... # copy/paste from Google Calendar
     ```
 
     Set desired default event notifications on the calendar:

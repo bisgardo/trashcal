@@ -1,7 +1,7 @@
 import json
 import requests
 
-from mitaffald_const import genanv_text, rest_text
+from mitaffald_const import keys
 
 
 def fetch_address(street_name, house_number_str, postcode_str, postcode_name):
@@ -31,7 +31,7 @@ def fetch_types_html(address_id, year):
 def fetch_calendar_html(address_id, year):
     url = 'https://mitaffald.affaldvarme.dk/Adresse/ToemmekalenderContent'
     cookies = {'AddressId': address_id}
-    data = {'filterValues': [rest_text, genanv_text], 'year': year}
+    data = {'filterValues': keys, 'year': year}
     headers = {'Content-Type': 'application/json; charset=utf-8'}
     r = requests.post(url, headers=headers, cookies=cookies, data=json.dumps(data))
     return r.text

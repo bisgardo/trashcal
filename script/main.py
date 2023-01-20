@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
 import os
+import sys
+sys.path.append(os.getcwd() + '/../backend')
 
-from fetch import fetch
+from mitaffald_fetch import fetch_calendar_html
+from mitaffald_parse import parse_calendar
 from google_calendar import init_google_calendar_events_service, google_calendar_event_data
-from parse import parse
 
 # TODO Let the script resolve address ID. At least do:
 #      1. present clickable URL to user
@@ -19,13 +21,13 @@ event_title_genanv = 'Genanvendeligt affald'
 
 
 def to_events(dates, title):
-    return [google_calendar_event_data(title, d.strftime('%Y-%m-%d')) for d in dates]
+    return [google_calendar_event_data(title, d) for d in dates]
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    data = fetch(address_id, year)
-    rest_dates, genanv_dates = parse(data, year)
+    data = fetch_calendar_html(address_id, year)
+    dates, v = parse_calendar(data, year)
+    rest_dates, genanv_dates = dates['restaffald'], dates['genanvendeligt_affald']
 
     rest_events = to_events(rest_dates, event_title_rest)
     genanv_events = to_events(genanv_dates, event_title_genanv)

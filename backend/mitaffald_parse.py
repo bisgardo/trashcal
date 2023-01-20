@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import re
 from datetime import date
 
-from mitaffald_const import genanv_text, rest_text
+from mitaffald_const import key_map
 
 
 def map_to_dates(strs, year):
@@ -10,12 +10,6 @@ def map_to_dates(strs, year):
         day, month = s.split('/')
         return date(year, month, day)
     return [to_date(s) for s in strs]
-
-
-key_map = {
-    rest_text: 'restaffald',
-    genanv_text: 'genanvendeligt_affald'
-}
 
 
 def parse_types(html):
@@ -35,10 +29,7 @@ def parse_calendar(html, year_int):
         [5, 6, 7, 8],  # table2 cols: maj-aug
         [9, 10, 11, 12]  # table3 cols: sep-dec
     ]
-    res = {
-        rest_text: [],
-        genanv_text: [],
-    }
+    res = {k: [] for k in key_map.keys()}
     for i, table in enumerate(tables):
         cols = table.find_all('td')
         for j, col in enumerate(cols):  # there's only one row
@@ -51,6 +42,6 @@ def parse_calendar(html, year_int):
             for l in lines:
                 # Extract type and day from the line and append it to res.
                 m = re.match(r'(.*): \w+ (\d+)\.', l)
-                (type, day) = m.groups()
-                res[type].append(date(year_int, month, int(day.lstrip('0'))).strftime('%Y-%m-%d'))
+                (k, day) = m.groups()
+                res[k].append(date(year_int, month, int(day.lstrip('0'))).strftime('%Y-%m-%d'))
     return {key_map[k]: v for (k, v) in res.items()}, 1
