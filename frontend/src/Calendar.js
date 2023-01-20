@@ -33,18 +33,16 @@ function daysInMonth(monthIdx, isLeapYear) {
 }
 
 function resolveTypes(types, data, date) {
-    return types.filter((t) => {
-        let datum = data.get(t);
-        console.log(datum, date, datum.has(date));
-        return datum.has(date);
-    });
+    // Note that printing 'data' here prunes the value to 32 bits in Firefox.
+    // But not if you throw an exception right afterwards!
+    // (Try to make minimal example of this.)
+    return types.filter((t) => data.get(t).has(date));
 }
 
 function dayStyle(data, types, year, month, day) {
     // 'new Date' doesn't work as it uses the local timezone while 'Date.parse' doesn't!!
     return resolveTypes(types, data, Date.parse(`${year}-${month}-${day}`))
         .map((t) => {
-            console.log('matched type', t);
             switch (t) {
                 case 'restaffald':
                     return 'bg-emerald-400';

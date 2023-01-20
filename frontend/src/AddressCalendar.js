@@ -2,9 +2,13 @@ import { useEffect, useState } from 'react';
 import { Calendar } from './Calendar';
 
 function transformData(data) {
-    const res = new Map(Object.entries(data).map(([type, dates]) => [type, new Set(dates.map(Date.parse))]));
-    console.log({data, res});
-    return res;
+    try {
+        console.log({data});
+        return new Map(Object.entries(data).map(([type, dates]) => [type, new Set(dates.map(Date.parse))]));
+    } catch {
+        console.error('invalid data:', data);
+        throw new Error('invalid data (logged to console)')
+    }
 }
 
 export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIndex }) {
