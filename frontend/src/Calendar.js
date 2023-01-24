@@ -44,10 +44,24 @@ function dayStyle(data, types, year, month, day) {
     return resolveTypes(types, data, Date.parse(`${year}-${month}-${day}`))
         .map((t) => {
             switch (t) {
-                case 'restaffald':
-                    return 'bg-emerald-400';
-                case 'genanvendeligt_affald':
+                case 'deponi':
+                case 'elektronik':
+                case 'fortroligt':
+                case 'glas':
+                case 'glas_plast_metal':
+                case 'have':
+                case 'hvidevarer':
+                case 'jern_metal':
+                case 'mad':
+                case 'pap':
+                case 'papir_pap':
+                case 'smat':
+                case 'stort':
+                    return 'bg-rose-400'
+                case 'genanvendeligt':
                     return 'bg-slate-400';
+                case 'rest':
+                    return 'bg-emerald-400';
                 default:
                     return '';
             }
