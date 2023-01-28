@@ -44,23 +44,23 @@ function dayStyle(data, types, year, month, day) {
     return resolveTypes(types, data, Date.parse(`${year}-${month}-${day}`))
         .map((t) => {
             switch (t) {
-                case 'deponi':
-                case 'elektronik':
-                case 'fortroligt':
-                case 'glas':
-                case 'glas_plast_metal':
-                case 'have':
-                case 'hvidevarer':
-                case 'jern_metal':
-                case 'mad':
-                case 'pap':
-                case 'papir_pap':
-                case 'smat':
-                case 'stort':
+                case 'd': // deponi
+                case 'e': // elektronik
+                case 'f': // fortroligt papir
+                case 'G': // glas
+                case 'gpm': // glas, plast og metal
+                case 'h': // haveaffald
+                case 'hh': // hårde hvidevarer
+                case 'jm': // jern og metal
+                case 'm': // madaffald
+                case 'p': // pap
+                case 'pp': // papir og pap
+                case 's': // småt brændbart
+                case 'S': // stort brændbart
                     return 'bg-rose-400'
-                case 'genanvendeligt':
+                case 'g': // genanvendeligt affald (glas, plast, metal, papir og pap)
                     return 'bg-slate-400';
-                case 'rest':
+                case 'r': // restaffald
                     return 'bg-emerald-400';
                 default:
                     return '';

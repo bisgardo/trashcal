@@ -4,6 +4,7 @@ import { Calendar } from './Calendar';
 function transformData(data) {
     try {
         console.log({data});
+        // TODO Year is no longer included in the date. Format is "<month>-<day>".
         return new Map(Object.entries(data).map(([type, dates]) => [type, new Set(dates.map(Date.parse))]));
     } catch {
         console.error('invalid data:', data);

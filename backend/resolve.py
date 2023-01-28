@@ -21,7 +21,7 @@ def resolve_calendar(mitaffald_id, year):
     if res:
         return res.json, True
     html = fetch_calendar_html(mitaffald_id, year)
-    json, version = parse_calendar(html, int(year))
+    json, version = parse_calendar(html)
     db.session.add(Calendar(mitaffald_id=mitaffald_id, year=year, json=json, parser_version=1))
     db.session.commit()
     return json, False

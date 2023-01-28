@@ -1,15 +1,7 @@
 from bs4 import BeautifulSoup
 import re
-from datetime import date
 
 from mitaffald_const import key_map
-
-
-def map_to_dates(strs, year):
-    def to_date(s):
-        day, month = s.split('/')
-        return date(year, month, day)
-    return [to_date(s) for s in strs]
 
 
 def parse_types(html):
@@ -20,7 +12,7 @@ def parse_types(html):
     return [t.text for t in select.find_all('option')]
 
 
-def parse_calendar(html, year_int):
+def parse_calendar(html):
     soup = BeautifulSoup(html, 'html.parser')
     tables = soup.find_all('tbody')
     # The response comes in three separate tables.
@@ -43,5 +35,5 @@ def parse_calendar(html, year_int):
                 # Extract type and day from the line and append it to res.
                 m = re.match(r'(.*): \w+ (\d+)\.', l)
                 (k, day) = m.groups()
-                res[k].append(date(year_int, month, int(day.lstrip('0'))).strftime('%Y-%m-%d'))
-    return {key_map[k]: v for (k, v) in res.items()}, 1
+                res[k].append(f'{month}-{int(day.lstrip("0"))}')
+    return {key_map[k]: v for (k, v) in res.items() if v}, 1

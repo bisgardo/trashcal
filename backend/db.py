@@ -13,15 +13,6 @@ class Address(db.Model):
     timestamp = db.Column('time', db.DateTime, nullable=False, default=datetime.utcnow)
 
 
-class Type(db.Model):
-    mitaffald_id = db.Column('mitaffald_id', UUIDType, primary_key=True)
-    year = db.Column('year', db.Integer, primary_key=True)
-    types_html_cache = db.Column('types_html_cache', db.String)
-    types = db.Column('types', db.JSON)
-    parser_version = db.Column('parser_version', db.Integer, nullable=False)
-    timestamp = db.Column('time', db.DateTime, nullable=False, default=datetime.utcnow)
-
-
 class Calendar(db.Model):
     mitaffald_id = db.Column('mitaffald_id', UUIDType, primary_key=True)
     year = db.Column('year', db.Integer, primary_key=True)

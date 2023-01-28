@@ -1,0 +1,6 @@
+data/
+instance/
+venv/
+out/
+*.json
+*.gz
