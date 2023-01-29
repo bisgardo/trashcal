@@ -1,19 +1,28 @@
 import { useEffect, useState } from 'react';
 import { Calendar } from './Calendar';
 
-function transformData(data) {
+function transformData(year, data) {
+    const dates = data['dates'];
+    const validFrom = data['valid_from'];
+
     try {
-        console.log({data});
-        // TODO Year is no longer included in the date. Format is "<month>-<day>".
-        return new Map(Object.entries(data).map(([type, dates]) => [type, new Set(dates.map(Date.parse))]));
+        return {
+            times: new Map(
+                Object.entries(dates).map(([type, dates]) => [
+                    type,
+                    new Set(dates.map((monthDay) => Date.parse(`${year}-${monthDay}`))),
+                ])
+            ),
+            validFromTime: Date.parse(`${year}-${validFrom}`),
+        };
     } catch {
-        console.error('invalid data:', data);
-        throw new Error('invalid data (logged to console)')
+        console.error('invalid data:', dates);
+        throw new Error('invalid data (logged to console)');
     }
 }
 
 export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIndex }) {
-    const [data, setData] = useState();
+    const [data, setData] = useState(undefined);
     const [fetchError, setFetchError] = useState('');
     useEffect(() => {
         const url = new URL(`http://localhost:5000/trash_calendar/${addressId}`);
@@ -23,7 +32,7 @@ export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIndex
         fetch(url, abortController)
             .then((res) => res.json())
             .then((res) => {
-                setData(transformData(res));
+                setData(transformData(year, res));
                 setFetchError('');
             })
             .catch((e) => {

@@ -38,4 +38,7 @@ def trash_calendar(address_id):
     res, _ = resolve_calendar(address_id, year)
     if not res:
         abort(404)
-    return res
+    return {
+        'dates': res,
+        'valid_from': '1-27',  # TODO use date from DB.
+    }

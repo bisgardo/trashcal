@@ -32,48 +32,96 @@ function daysInMonth(monthIdx, isLeapYear) {
     }
 }
 
-function resolveTypes(types, data, date) {
-    // Note that printing 'data' here prunes the value to 32 bits in Firefox.
+function resolveTypes(types, times, time) {
+    // Note that printing 'times' here prunes the value to 32 bits in Firefox.
     // But not if you throw an exception right afterwards!
     // (Try to make minimal example of this.)
-    return types.filter((t) => data.get(t).has(date));
+    return types.filter((t) => times.get(t).has(time));
 }
 
-function dayStyle(data, types, year, month, day) {
-    // 'new Date' doesn't work as it uses the local timezone while 'Date.parse' doesn't!!
-    return resolveTypes(types, data, Date.parse(`${year}-${month}-${day}`))
-        .map((t) => {
-            switch (t) {
-                case 'd': // deponi
-                case 'e': // elektronik
-                case 'f': // fortroligt papir
-                case 'G': // glas
-                case 'gpm': // glas, plast og metal
-                case 'h': // haveaffald
-                case 'hh': // hårde hvidevarer
-                case 'jm': // jern og metal
-                case 'm': // madaffald
-                case 'p': // pap
-                case 'pp': // papir og pap
-                case 's': // småt brændbart
-                case 'S': // stort brændbart
-                    return 'bg-rose-400'
-                case 'g': // genanvendeligt affald (glas, plast, metal, papir og pap)
-                    return 'bg-slate-400';
-                case 'r': // restaffald
-                    return 'bg-emerald-400';
-                default:
-                    return '';
-            }
-        })
-        .join(' ');
+function matchClassNames(types, times, time, isValid) {
+    // Note that Tailwind CSS classes must not be generated in template strings; see
+    // 'https://tailwindcss.com/docs/content-configuration#class-detection-in-depth'.
+    return resolveTypes(types, times, time).map((t) => {
+        switch (t) {
+            case 'd': // deponi
+            case 'e': // elektronik
+            case 'f': // fortroligt papir
+            case 'G': // glas
+            case 'gpm': // glas, plast og metal
+            case 'h': // haveaffald
+            case 'hh': // hårde hvidevarer
+            case 'jm': // jern og metal
+            case 'm': // madaffald
+            case 'p': // pap
+            case 'pp': // papir og pap
+            case 's': // småt brændbart
+            case 'S': // stort brændbart
+                return isValid ? 'bg-rose-400' : 'bg-rose-200';
+            case 'g': // genanvendeligt affald (glas, plast, metal, papir og pap)
+                return isValid ? 'bg-slate-400' : 'bg-slate-200';
+            case 'r': // restaffald
+                return isValid ? 'bg-emerald-400' : 'bg-emerald-200';
+            default:
+                return '';
+        }
+    });
+}
+
+function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
+    // // TODO Remove this dummy data.
+    validFromTime = Date.UTC(2023, 5, 5);
+    // times = new Map([
+    //     ['r', new Set([Date.UTC(2023, 6, 7)])],
+    //     ['g', new Set([Date.UTC(2023, 6, 7)])],
+    //     ['p', new Set([Date.UTC(2023, 6, 7)])],
+    // ]);
+    // types = [...types, 'p']
+
+    let isValid = time >= validFromTime;
+    let classNames = matchClassNames(types, times, time, isValid);
+    if (!classNames.length) {
+        classNames = [undefined];
+    }
+    // TODO Clean up...
+    let containerClassName = 'grid';
+    switch (classNames.length) {
+        case 1:
+            containerClassName += ' grid-cols-1';
+            break;
+        case 2:
+            containerClassName += ' grid-cols-2';
+            break;
+        case 3:
+            containerClassName += ' grid-cols-3';
+            break;
+        // TODO etc (up to the number of types)...
+    }
+    if (!isValid) {
+        containerClassName += ' text-gray-300';
+    }
+    return (
+        <>
+            <div className={containerClassName}>
+                <div className="px-1 absolute">
+                    {WEEKDAYS[weekdayIdx]} {day}
+                </div>
+                {classNames.map((c) => (
+                    <div key={c} className={c}>
+                        &nbsp;
+                    </div>
+                ))}
+            </div>
+        </>
+    );
 }
 
 export function Calendar({ data, year, isLeapYear, firstWeekdayIndex }) {
-    const types = Array.from(data.keys());
+    const { times, validFromTime } = data;
+    const types = Array.from(times.keys());
 
     let weekdayIndex = firstWeekdayIndex;
-    const nextWeekday = () => {
+    const nextWeekdayIdx = () => {
         const tmp = weekdayIndex;
         weekdayIndex = (weekdayIndex + 1) % 7;
         return tmp;
@@ -86,10 +134,15 @@ export function Calendar({ data, year, isLeapYear, firstWeekdayIndex }) {
                     <div key={monthIdx}>
                         <h3 className="font-bold">{name}</h3>
                         {Array.from(Array(daysInMonth(monthIdx, isLeapYear)).keys()).map((dayIdx) => (
-                            <div
-                                className={`border mb-1 p-0.5 ${dayStyle(data, types, year, monthIdx + 1, dayIdx + 1)}`}
-                            >
-                                {WEEKDAYS[nextWeekday()]} {dayIdx + 1}
+                            <div key={dayIdx} className="border mb-1">
+                                <Day
+                                    times={times}
+                                    validFromTime={validFromTime}
+                                    types={types}
+                                    time={Date.UTC(year, monthIdx, dayIdx)}
+                                    day={dayIdx + 1}
+                                    weekdayIdx={nextWeekdayIdx()}
+                                />
                             </div>
                         ))}
                     </div>

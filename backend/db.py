@@ -18,4 +18,7 @@ class Calendar(db.Model):
     year = db.Column('year', db.Integer, primary_key=True)
     json = db.Column('json', db.JSON)
     parser_version = db.Column('parser_version', db.Integer, nullable=False)
+    # TODO Rename to 'create_time' and add 'update_time'.
+    #      The creation time is used to display which dates aren't accounted for (they're grayed out).
+    #      The update time is used to determine if it's time to refresh the data.
     timestamp = db.Column('time', db.DateTime, nullable=False, default=datetime.utcnow)
