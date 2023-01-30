@@ -10,7 +10,7 @@ class Address(db.Model):
     house_number = db.Column('house_number', db.Integer, primary_key=True)
     postcode = db.Column('postcode', db.Integer, primary_key=True)
     mitaffald_id = db.Column('mitaffald_id', UUIDType)
-    timestamp = db.Column('time', db.DateTime, nullable=False, default=datetime.utcnow)
+    update_time = db.Column('update_time', db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.now)
 
 
 class Calendar(db.Model):
@@ -18,7 +18,7 @@ class Calendar(db.Model):
     year = db.Column('year', db.Integer, primary_key=True)
     json = db.Column('json', db.JSON)
     parser_version = db.Column('parser_version', db.Integer, nullable=False)
-    # TODO Rename to 'create_time' and add 'update_time'.
-    #      The creation time is used to display which dates aren't accounted for (they're grayed out).
-    #      The update time is used to determine if it's time to refresh the data.
-    timestamp = db.Column('time', db.DateTime, nullable=False, default=datetime.utcnow)
+    # Used to display which dates aren't accounted for (they're grayed out).
+    create_time = db.Column('create_time', db.DateTime, nullable=False, default=datetime.utcnow)
+    # Used to determine if it's time to refresh the data.
+    update_time = db.Column('update_time', db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.now)

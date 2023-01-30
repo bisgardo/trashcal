@@ -40,7 +40,7 @@ function resolveTypes(types, times, time) {
 }
 
 function matchClassNames(types, times, time, isValid) {
-    // Note that Tailwind CSS classes must not be generated in template strings; see
+    // Tailwind CSS classes must not be generated in template strings; see
     // 'https://tailwindcss.com/docs/content-configuration#class-detection-in-depth'.
     return resolveTypes(types, times, time).map((t) => {
         switch (t) {
@@ -89,6 +89,8 @@ function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
     // if (time === validFromTime) console.log('after', {classNames});
 
     function gridColsClass() {
+        // Tailwind CSS classes must not be generated in template strings; see
+        // 'https://tailwindcss.com/docs/content-configuration#class-detection-in-depth'.
         switch (classNames.length) {
             case 1:
                 return 'grid-cols-1';
