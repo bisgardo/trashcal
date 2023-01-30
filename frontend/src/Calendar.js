@@ -70,44 +70,51 @@ function matchClassNames(types, times, time, isValid) {
 
 function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
     // // TODO Remove this dummy data.
-    validFromTime = Date.UTC(2023, 5, 5);
+    // validFromTime = Date.UTC(2023, 5, 5);
     // times = new Map([
     //     ['r', new Set([Date.UTC(2023, 6, 7)])],
     //     ['g', new Set([Date.UTC(2023, 6, 7)])],
     //     ['p', new Set([Date.UTC(2023, 6, 7)])],
     // ]);
-    // types = [...types, 'p']
+    // types = ['r', 'p', 'g']
 
     let isValid = time >= validFromTime;
     let classNames = matchClassNames(types, times, time, isValid);
+    // if (time === validFromTime) console.log('before', {classNames});
     if (!classNames.length) {
         classNames = [undefined];
+    } else if (classNames.length > 5) {
+        classNames = ['bg-amber-900'];
     }
-    // TODO Clean up...
-    let containerClassName = 'grid';
-    switch (classNames.length) {
-        case 1:
-            containerClassName += ' grid-cols-1';
-            break;
-        case 2:
-            containerClassName += ' grid-cols-2';
-            break;
-        case 3:
-            containerClassName += ' grid-cols-3';
-            break;
-        // TODO etc (up to the number of types)...
+    // if (time === validFromTime) console.log('after', {classNames});
+
+    function gridColsClass() {
+        switch (classNames.length) {
+            case 1:
+                return 'grid-cols-1';
+            case 2:
+                return 'grid-cols-2';
+            case 3:
+                return 'grid-cols-3';
+            case 4:
+                return 'grid-cols-4';
+            case 5:
+                return 'grid-cols-5';
+        }
     }
+
+    const containerClassNames = ['grid', gridColsClass()];
     if (!isValid) {
-        containerClassName += ' text-gray-300';
+        containerClassNames.push('text-gray-300');
     }
     return (
         <>
-            <div className={containerClassName}>
+            <div className={containerClassNames.join(' ')}>
                 <div className="px-1 absolute">
                     {WEEKDAYS[weekdayIdx]} {day}
                 </div>
-                {classNames.map((c) => (
-                    <div key={c} className={c}>
+                {classNames.map((c, i) => (
+                    <div key={i} className={c}>
                         &nbsp;
                     </div>
                 ))}
