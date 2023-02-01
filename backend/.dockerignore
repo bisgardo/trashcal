@@ -1,5 +1,6 @@
 data/
 instance/
+__pycache__/
 venv/
 out/
 *.json
