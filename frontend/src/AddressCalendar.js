@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Calendar } from './Calendar';
 
+// TODO Make configurable.
+const BACKEND_BASE_URL = 'http://localhost:5000';
+
 function transformData(year, data) {
     const dates = data['dates'];
-    const validFrom = data['valid_from'];
+    const validFrom = data['valid_from_date'];
 
     try {
         return {
@@ -22,10 +25,10 @@ function transformData(year, data) {
 }
 
 export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIndex }) {
-    const [data, setData] = useState(undefined);
+    const [data, setData] = useState(null);
     const [fetchError, setFetchError] = useState('');
     useEffect(() => {
-        const url = new URL(`http://localhost:5000/trash_calendar/${addressId}`);
+        const url = new URL(`${BACKEND_BASE_URL}/trash_calendar/${addressId}`);
         url.searchParams.append('year', year);
 
         const abortController = new AbortController();
@@ -36,7 +39,7 @@ export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIndex
                 setFetchError('');
             })
             .catch((e) => {
-                setData(undefined);
+                setData(null);
                 setFetchError(e.message);
             });
 

@@ -39,34 +39,91 @@ function resolveTypes(types, times, time) {
     return types.filter((t) => times.get(t).has(time));
 }
 
-function matchClassNames(types, times, time, isValid) {
-    // Note that Tailwind CSS classes must not be generated in template strings; see
-    // 'https://tailwindcss.com/docs/content-configuration#class-detection-in-depth'.
-    return resolveTypes(types, times, time).map((t) => {
-        switch (t) {
-            case 'd': // deponi
-            case 'e': // elektronik
-            case 'f': // fortroligt papir
-            case 'G': // glas
-            case 'gpm': // glas, plast og metal
-            case 'h': // haveaffald
-            case 'hh': // hårde hvidevarer
-            case 'jm': // jern og metal
-            case 'm': // madaffald
-            case 'p': // pap
-            case 'pp': // papir og pap
-            case 's': // småt brændbart
-            case 'S': // stort brændbart
-                return isValid ? 'bg-rose-400' : 'bg-rose-200';
-            case 'g': // genanvendeligt affald (glas, plast, metal, papir og pap)
-                return isValid ? 'bg-slate-400' : 'bg-slate-200';
-            case 'r': // restaffald
-                return isValid ? 'bg-emerald-400' : 'bg-emerald-200';
-            default:
-                return '';
-        }
-    });
-}
+// Note that Tailwind CSS classes must not be generated in template strings; see
+// 'https://tailwindcss.com/docs/content-configuration#class-detection-in-depth'.
+const TYPES = {
+    d: {
+        name: 'Deponi',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    e: {
+        name: 'Elektronik',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    f: {
+        name: 'Fortroligt papir',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    G: {
+        name: 'Glas',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    gpm: {
+        name: 'Glast/plast/metal',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    h: {
+        name: 'Haveaffald',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    hh: {
+        name: 'Hårde Hvidevarer',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    jm: {
+        name: 'Jern/metal',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    m: {
+        name: 'Madaffald',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    p: {
+        name: 'Pap',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    pp: {
+        name: 'Pap/papir',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    s: {
+        name: 'Småt brændbart',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    S: {
+        name: 'Stort brændbart',
+        validClass: 'bg-rose-400',
+        invalidClass: 'bg-rose-200',
+    },
+    g: {
+        name: 'Genanvendeligt affald',
+        validClass: 'bg-slate-400',
+        invalidClass: 'bg-slate-200',
+    },
+    r: {
+        name: 'Restaffald',
+        validClass: 'bg-emerald-400',
+        invalidClass: 'bg-emerald-200',
+    },
+};
+
+const FALLBACK_TYPE = {
+    name: 'Ukendt',
+    validClass: 'bg-gray-400',
+    invalidClass: 'bg-gray-200',
+};
 
 function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
     // // TODO Remove this dummy data.
@@ -78,15 +135,17 @@ function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
     // ]);
     // types = ['r', 'p', 'g']
 
-    let isValid = time >= validFromTime;
-    let classNames = matchClassNames(types, times, time, isValid);
-    // if (time === validFromTime) console.log('before', {classNames});
+    const isValid = time >= validFromTime;
+    const typeDatas = resolveTypes(types, times, time).map((t) => TYPES[t] || FALLBACK_TYPE);
+    const names = typeDatas.map((t) => t.name);
+    let classNames = typeDatas.map((t) => {
+        return isValid ? t.validClass : t.invalidClass;
+    });
     if (!classNames.length) {
-        classNames = [undefined];
+        classNames = [null];
     } else if (classNames.length > 5) {
         classNames = ['bg-amber-900'];
     }
-    // if (time === validFromTime) console.log('after', {classNames});
 
     function gridColsClass() {
         switch (classNames.length) {
@@ -100,16 +159,17 @@ function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
                 return 'grid-cols-4';
             case 5:
                 return 'grid-cols-5';
+            default:
+                throw new Error('never happens: too many columns');
         }
     }
 
-    const containerClassNames = ['grid', gridColsClass()];
+    const containerClassNames = ['border mb-1 grid', gridColsClass()];
     if (!isValid) {
         containerClassNames.push('text-gray-300');
     }
     return (
-        <>
-            <div className={containerClassNames.join(' ')}>
+            <div className={containerClassNames.join(' ')} title={names.join('\n')}>
                 <div className="px-1 absolute">
                     {WEEKDAYS[weekdayIdx]} {day}
                 </div>
@@ -119,7 +179,6 @@ function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
                     </div>
                 ))}
             </div>
-        </>
     );
 }
 
@@ -141,8 +200,8 @@ export function Calendar({ data, year, isLeapYear, firstWeekdayIndex }) {
                     <div key={monthIdx}>
                         <h3 className="font-bold">{name}</h3>
                         {Array.from(Array(daysInMonth(monthIdx, isLeapYear)).keys()).map((dayIdx) => (
-                            <div key={dayIdx} className="border mb-1">
                                 <Day
+                                    key={dayIdx}
                                     times={times}
                                     validFromTime={validFromTime}
                                     types={types}
@@ -150,7 +209,6 @@ export function Calendar({ data, year, isLeapYear, firstWeekdayIndex }) {
                                     day={dayIdx + 1}
                                     weekdayIdx={nextWeekdayIdx()}
                                 />
-                            </div>
                         ))}
                     </div>
                 ))}
