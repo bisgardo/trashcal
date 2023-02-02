@@ -20,10 +20,10 @@ def resolve_address(street_name, house_number, postcode, postcode_name):
 def resolve_calendar(mitaffald_id, year):
     res = Calendar.query.filter_by(mitaffald_id=mitaffald_id, year=year).first()
     if res:
-        return res.json, True
+        return res.json, res.create_time
     html = fetch_calendar_html(mitaffald_id, year)
     json, version = parse_calendar(html)
     # TODO Store NULL on failure.
     db.session.add(Calendar(mitaffald_id=mitaffald_id, year=year, json=json, parser_version=version))
     db.session.commit()
-    return json, False
+    return json, None

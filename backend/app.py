@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from datetime import datetime
 
 from flask import Flask, request, abort
 from flask_cors import CORS
@@ -35,10 +36,14 @@ def address():
 def trash_calendar(address_id):
     query_params = request.args
     year = query_params['year']
-    res, _ = resolve_calendar(address_id, year)
+    res, valid_from_time = resolve_calendar(address_id, year)
     if not res:
         abort(404)
+    if not valid_from_time:
+        valid_from_time = datetime.utcnow()
+    # Adding '-' inside the format specifier eliminates leading '0'.
+    valid_from_date = valid_from_time.strftime('%-m-%-d')
     return {
         'dates': res,
-        'valid_from_date': '1-27',  # TODO use date from DB.
+        'valid_from_date': valid_from_date,
     }

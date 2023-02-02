@@ -207,7 +207,7 @@ export function Calendar({ data, year, isLeapYear, firstWeekdayIndex }) {
                                 times={times}
                                 validFromTime={validFromTime}
                                 types={types}
-                                time={Date.UTC(year, monthIdx, dayIdx)}
+                                time={Date.UTC(year, monthIdx, dayIdx+1)}
                                 day={dayIdx + 1}
                                 weekdayIdx={nextWeekdayIdx()}
                             />
