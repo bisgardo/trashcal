@@ -10,6 +10,7 @@ def resolve_address(street_name, house_number, postcode, postcode_name):
             return str(res.mitaffald_id), True
         return None, True
     mitaffald_id = fetch_address(street_name, house_number, postcode, postcode_name)
+    # TODO Store NULL on failure.
     db.session.add(
         Address(street_name=street_name, house_number=house_number, postcode=postcode, mitaffald_id=mitaffald_id))
     db.session.commit()
@@ -22,6 +23,7 @@ def resolve_calendar(mitaffald_id, year):
         return res.json, True
     html = fetch_calendar_html(mitaffald_id, year)
     json, version = parse_calendar(html)
+    # TODO Store NULL on failure.
     db.session.add(Calendar(mitaffald_id=mitaffald_id, year=year, json=json, parser_version=version))
     db.session.commit()
     return json, False
