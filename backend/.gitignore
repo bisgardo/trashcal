@@ -1,2 +1,4 @@
 data/
 instance/
+__pycache__/
+venv/

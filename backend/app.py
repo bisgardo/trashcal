@@ -40,5 +40,5 @@ def trash_calendar(address_id):
         abort(404)
     return {
         'dates': res,
-        'valid_from': '1-27',  # TODO use date from DB.
+        'valid_from_date': '1-27',  # TODO use date from DB.
     }

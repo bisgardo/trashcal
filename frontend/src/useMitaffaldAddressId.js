@@ -9,7 +9,7 @@ function addressUrlFromDawa({ vejnavn, husnr, postnr, postnrnavn }) {
     return url;
 }
 
-const INIT_STATE = { addressId: undefined, addressError: '' };
+const INIT_STATE = { addressId: null, addressError: '' };
 
 export function useMitaffaldAddressId(dawaAddress) {
     const [state, setState] = useState(INIT_STATE);
@@ -26,7 +26,7 @@ export function useMitaffaldAddressId(dawaAddress) {
                     return res.text();
                 })
                 .then((res) => setState({ addressId: res, addressError: '' }))
-                .catch((e) => setState({ addressId: undefined, addressError: e.message }));
+                .catch((e) => setState({ addressId: null, addressError: e.message }));
             return () => abortController.abort(); // not sure why, but returning raw function (even when binding 'this') doesn't work
         }
     }, [dawaAddress]);
