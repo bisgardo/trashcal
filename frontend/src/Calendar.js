@@ -159,13 +159,15 @@ function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
                 </span>
             </div>
             <table className="border w-full">
-                <tr>
-                    {classNames.map((c, i) => (
-                        <td key={i} className={`${c} p-0`}>
-                            &nbsp;
-                        </td>
-                    ))}
-                </tr>
+                <tbody>
+                    <tr>
+                        {classNames.map((c, i) => (
+                            <td key={i} className={`${c} p-0`}>
+                                &nbsp;
+                            </td>
+                        ))}
+                    </tr>
+                </tbody>
             </table>
         </div>
     );
