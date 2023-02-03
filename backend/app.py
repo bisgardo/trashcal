@@ -39,6 +39,7 @@ def trash_calendar(address_id):
     res, valid_from_time = resolve_calendar(address_id, year)
     if not res:
         abort(404)
+    # TODO Mitaffald doesn't include data for the current day - so valid time is the day *after* create time.
     if not valid_from_time:
         valid_from_time = datetime.utcnow()
     # Adding '-' inside the format specifier eliminates leading '0'.

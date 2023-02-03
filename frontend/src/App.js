@@ -8,6 +8,13 @@ const YEAR = 2023;
 const IS_LEAP_YEAR = false;
 const FIRST_WEEKDAY_INDEX = 6; // Sunday
 
+function showAddressInfoUrlFromMitaffaldId(mitaffaldId) {
+    const url = new URL('https://mitaffald.affaldvarme.dk/Adresse/VisAdresseInfo');
+    url.searchParams.append('address-selected-id', mitaffaldId);
+    return url.toString();
+}
+
+// TODO Set URL by MitaffaldID.
 export default function App() {
     const inputRef = useRef(null);
     const { selectedAddress } = useDawaAutocomplete(inputRef);
@@ -33,7 +40,12 @@ export default function App() {
             <p>
                 {addressText && (
                     <>
-                        Valgt adresse: {addressText} &middot; MitAffald ID: {addressId ? addressId : <i>Indlæser...</i>}
+                        Valgt adresse: {addressText} &middot; MitAffald ID:{' '}
+                        {addressId ? (
+                            <a target="_blank" rel="noreferrer" href={showAddressInfoUrlFromMitaffaldId(addressId)}>{addressId}</a>
+                        ) : (
+                            <i>Indlæser...</i>
+                        )}
                     </>
                 )}
             </p>

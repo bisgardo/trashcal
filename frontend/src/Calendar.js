@@ -147,39 +147,26 @@ function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
         classNames = ['bg-amber-900'];
     }
 
-    function gridColsClass() {
-        // Tailwind CSS classes must not be generated in template strings; see
-        // 'https://tailwindcss.com/docs/content-configuration#class-detection-in-depth'.
-        switch (classNames.length) {
-            case 1:
-                return 'grid-cols-1';
-            case 2:
-                return 'grid-cols-2';
-            case 3:
-                return 'grid-cols-3';
-            case 4:
-                return 'grid-cols-4';
-            case 5:
-                return 'grid-cols-5';
-            default:
-                throw new Error('never happens: too many columns');
-        }
-    }
-
-    const containerClassNames = ['border mb-1 grid', gridColsClass()];
+    let textClassNames = '';
     if (!isValid) {
-        containerClassNames.push('text-gray-300');
+        textClassNames = 'text-gray-300';
     }
     return (
-        <div className={containerClassNames.join(' ')} title={names.join('\n')}>
+        <div className="mb-1" title={names.join('\n')}>
             <div className="px-1 absolute">
-                {WEEKDAYS[weekdayIdx]} {day}
+                <span className={textClassNames}>
+                    {WEEKDAYS[weekdayIdx]} {day}
+                </span>
             </div>
-            {classNames.map((c, i) => (
-                <div key={i} className={c}>
-                    &nbsp;
-                </div>
-            ))}
+            <table className="border w-full">
+                <tr>
+                    {classNames.map((c, i) => (
+                        <td key={i} className={`${c} p-0`}>
+                            &nbsp;
+                        </td>
+                    ))}
+                </tr>
+            </table>
         </div>
     );
 }
@@ -207,7 +194,7 @@ export function Calendar({ data, year, isLeapYear, firstWeekdayIndex }) {
                                 times={times}
                                 validFromTime={validFromTime}
                                 types={types}
-                                time={Date.UTC(year, monthIdx, dayIdx+1)}
+                                time={Date.UTC(year, monthIdx, dayIdx + 1)}
                                 day={dayIdx + 1}
                                 weekdayIdx={nextWeekdayIdx()}
                             />
