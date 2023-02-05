@@ -14,7 +14,6 @@ function showAddressInfoUrlFromMitaffaldId(mitaffaldId) {
     return url.toString();
 }
 
-// TODO Set URL by MitaffaldID.
 export default function App() {
     const inputRef = useRef(null);
     const { selectedAddress } = useDawaAutocomplete(inputRef);
@@ -42,7 +41,9 @@ export default function App() {
                     <>
                         Valgt adresse: {addressText} &middot; MitAffald ID:{' '}
                         {addressId ? (
-                            <a target="_blank" rel="noreferrer" href={showAddressInfoUrlFromMitaffaldId(addressId)}>{addressId}</a>
+                            <a target="_blank" rel="noreferrer" href={showAddressInfoUrlFromMitaffaldId(addressId)}>
+                                {addressId}
+                            </a>
                         ) : (
                             <i>Indlæser...</i>
                         )}

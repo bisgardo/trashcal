@@ -19,8 +19,8 @@ with app.app_context():
 
 # TODO Validate inputs and handle errors.
 
-@app.route('/lookup_address_id')
-def address():
+@app.route('/address')
+def address_id():
     query_params = request.args
     street_name = query_params['street_name']
     house_number = query_params['house_number']
