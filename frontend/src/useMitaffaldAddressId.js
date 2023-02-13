@@ -36,5 +36,5 @@ export function useMitaffaldAddressId(dawaAddress) {
             return () => abortController.abort(); // not sure why, but returning raw function (even when binding 'this') doesn't work
         }
     }, [dawaAddress]);
-    return {addressId, addressError};
+    return { addressId, addressError };
 }

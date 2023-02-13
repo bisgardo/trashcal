@@ -1,3 +1,5 @@
+import './calendar.scss';
+
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
 const WEEKDAYS = ['M', 'T', 'O', 'T', 'F', 'L', 'S'];
 
@@ -32,98 +34,40 @@ function daysInMonth(monthIdx, isLeapYear) {
     }
 }
 
-function resolveTypes(types, times, time) {
+function matchTypes(types, times, time) {
     // Note that printing 'times' here prunes the value to 32 bits in Firefox.
     // But not if you throw an exception right afterwards!
     // (Try to make minimal example of this.)
     return types.filter((t) => times.get(t).has(time));
 }
 
-// Note that Tailwind CSS classes must not be generated in template strings; see
-// 'https://tailwindcss.com/docs/content-configuration#class-detection-in-depth'.
-const TYPES = {
-    d: {
-        name: 'Deponi',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    e: {
-        name: 'Elektronik',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    f: {
-        name: 'Fortroligt papir',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    G: {
-        name: 'Glas',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    gpm: {
-        name: 'Glast/plast/metal',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    h: {
-        name: 'Haveaffald',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    hh: {
-        name: 'Hårde Hvidevarer',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    jm: {
-        name: 'Jern/metal',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    m: {
-        name: 'Madaffald',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    p: {
-        name: 'Pap',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    pp: {
-        name: 'Pap/papir',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    s: {
-        name: 'Småt brændbart',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    S: {
-        name: 'Stort brændbart',
-        validClass: 'bg-rose-400',
-        invalidClass: 'bg-rose-200',
-    },
-    g: {
-        name: 'Genanvendeligt affald',
-        validClass: 'bg-slate-400',
-        invalidClass: 'bg-slate-200',
-    },
-    r: {
-        name: 'Restaffald',
-        validClass: 'bg-emerald-400',
-        invalidClass: 'bg-emerald-200',
-    },
+const TYPE_NAMES = {
+    d: 'Deponi',
+    e: 'Elektronik',
+    f: 'Fortroligt papir',
+    G: 'Glas',
+    gpm: 'Glast, plast, metal',
+    h: 'Haveaffald',
+    hh: 'Hårde Hvidevarer',
+    jm: 'Jern, metal',
+    m: 'Madaffald',
+    p: 'Pap',
+    pp: 'Pap, papir',
+    s: 'Småt brændbart',
+    S: 'Stort brændbart',
+    g: 'Genanvendeligt affald',
+    r: 'Restaffald',
 };
 
-const FALLBACK_TYPE = {
-    name: 'Ukendt',
-    validClass: 'bg-gray-400',
-    invalidClass: 'bg-gray-200',
-};
+const FALLBACK_TYPE_NAME = 'Ukendt';
+
+const MAX_TYPES = 5;
+
+const CSS_CLASS_CONTAINER = 'day';
+const CSS_CLASS_TEXT = 'text';
+const CSS_CLASS_TYPE_MANY = 'type-many';
+const CSS_CLASS_TYPE_UNKNOWN = 'type-unknown';
+const CSS_CLASS_INVALID = 'invalid';
 
 function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
     // // TODO Remove this dummy data.
@@ -136,33 +80,33 @@ function Day({ times, validFromTime, types, time, day, weekdayIdx }) {
     // types = ['r', 'p', 'g']
 
     const isValid = time >= validFromTime;
-    const typeDatas = resolveTypes(types, times, time).map((t) => TYPES[t] || FALLBACK_TYPE);
-    const names = typeDatas.map((t) => t.name);
-    let classNames = typeDatas.map((t) => {
-        return isValid ? t.validClass : t.invalidClass;
-    });
-    if (!classNames.length) {
-        classNames = [null];
-    } else if (classNames.length > 5) {
-        classNames = ['bg-amber-900'];
-    }
+    const matchedTypes = matchTypes(types, times, time);
+    const names = matchedTypes.map((t) => TYPE_NAMES[t] || FALLBACK_TYPE_NAME);
 
-    let textClassNames = '';
+    const classNames = (() => {
+        if (!matchedTypes.length) {
+            return [null];
+        }
+        if (matchedTypes.length > MAX_TYPES) {
+            return [CSS_CLASS_TYPE_MANY];
+        }
+        return matchedTypes.map((t) => (TYPE_NAMES[t] ? `type-${t}` : CSS_CLASS_TYPE_UNKNOWN));
+    })();
+
+    const containerClasses = [CSS_CLASS_CONTAINER];
     if (!isValid) {
-        textClassNames = 'text-gray-300';
+        containerClasses.push(CSS_CLASS_INVALID);
     }
     return (
-        <div className="mb-1" title={names.join('\n')}>
-            <div className="px-1 absolute">
-                <span className={textClassNames}>
-                    {WEEKDAYS[weekdayIdx]} {day}
-                </span>
+        <div className={containerClasses.join('\n')} title={names.join('\n')}>
+            <div className={CSS_CLASS_TEXT}>
+                {WEEKDAYS[weekdayIdx]} {day}
             </div>
-            <table className="border w-full">
+            <table>
                 <tbody>
                     <tr>
                         {classNames.map((c, i) => (
-                            <td key={i} className={`${c} p-0`}>
+                            <td key={i} className={c}>
                                 &nbsp;
                             </td>
                         ))}

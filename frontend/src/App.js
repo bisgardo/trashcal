@@ -1,4 +1,3 @@
-import './dawa.scss';
 import { useRef } from 'react';
 import { useDawaAutocomplete } from './useDawaAutocomplete';
 import { useMitaffaldAddressId } from './useMitaffaldAddressId';
