@@ -44,7 +44,8 @@ export function useDawaAutocomplete(inputRef) {
         const res = dawaAutocomplete(inputRef.current, {
             params: { kommunekode: DAWA_KOMMUNEKODE_AARHUS },
             select: (r) => {
-                // TODO This somehow screws up the DAWA component in a minor way (leaves the cursor to input another component)
+                // TODO This somehow screws up the DAWA component in a minor way
+                //      by leaving the cursor to input another component.
                 //      Should try an approach not using react-router?
                 navigate(`/${r.tekst}`);
             },
