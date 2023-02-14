@@ -1,6 +1,5 @@
 import './calendar-day.scss';
-
-const WEEKDAYS = ['M', 'T', 'O', 'T', 'F', 'L', 'S'];
+import { WEEKDAY_NAMES } from './config';
 
 const TYPE_NAMES = {
     d: 'Deponi',
@@ -50,7 +49,7 @@ export function CalendarDay({ matchedTypes, dayNum, weekdayIdx, isValid }) {
     return (
         <div className={containerClasses.join('\n')} title={names.join('\n')}>
             <div className={CSS_CLASS_TEXT}>
-                {WEEKDAYS[weekdayIdx]} {dayNum}
+                {WEEKDAY_NAMES[weekdayIdx]} {dayNum}
             </div>
             <table>
                 <tbody>

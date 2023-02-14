@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { BACKEND_URL_BASE } from './config';
 
 function addressUrlFromDawa({ vejnavn, husnr, postnr, postnrnavn }) {
-    const url = new URL('http://localhost:5000/address');
+    const url = new URL(`${BACKEND_URL_BASE}/address`);
     url.searchParams.append('street_name', vejnavn);
     url.searchParams.append('house_number', husnr);
     url.searchParams.append('postcode', postnr);

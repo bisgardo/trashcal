@@ -2,13 +2,10 @@ import { useRef } from 'react';
 import { useDawaAutocomplete } from './useDawaAutocomplete';
 import { useMitaffaldAddressId } from './useMitaffaldAddressId';
 import { AddressCalendar } from './AddressCalendar';
-
-const YEAR = 2023;
-const IS_LEAP_YEAR = false;
-const FIRST_WEEKDAY_INDEX = 6; // Sunday
+import { YEAR_FIRST_WEEKDAY_IDX, YEAR_IS_LEAP_YEAR, YEAR, MITAFFALD_URL_VIEW_ADDRESS } from './config';
 
 function showAddressInfoUrlFromMitaffaldId(mitaffaldId) {
-    const url = new URL('https://mitaffald.affaldvarme.dk/Adresse/VisAdresseInfo');
+    const url = new URL(MITAFFALD_URL_VIEW_ADDRESS);
     url.searchParams.append('address-selected-id', mitaffaldId);
     return url.toString();
 }
@@ -38,7 +35,7 @@ export default function App() {
             <p>
                 {addressText && (
                     <>
-                        Valgt adresse: {addressText} &middot; MitAffald ID:{' '}
+                        Valgt adresse: {addressText} &middot; MitAffald ID:&nbsp;
                         {addressId ? (
                             <a target="_blank" rel="noreferrer" href={showAddressInfoUrlFromMitaffaldId(addressId)}>
                                 {addressId}
@@ -54,8 +51,8 @@ export default function App() {
                 <AddressCalendar
                     addressId={addressId}
                     year={YEAR}
-                    isLeapYear={IS_LEAP_YEAR}
-                    firstWeekdayIndex={FIRST_WEEKDAY_INDEX}
+                    isLeapYear={YEAR_IS_LEAP_YEAR}
+                    firstWeekdayIdx={YEAR_FIRST_WEEKDAY_IDX}
                 />
             )}
             {addressError && <div>Address error: {addressError}</div>}

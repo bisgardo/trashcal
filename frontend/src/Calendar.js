@@ -1,6 +1,5 @@
 import { CalendarDay } from './CalendarDay';
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
+import { MONTH_NAMES } from './config';
 
 export function Calendar({ data }) {
     return (
@@ -9,7 +8,7 @@ export function Calendar({ data }) {
             <div className="grid grid-cols-12 gap-4">
                 {data.map((days, monthIdx) => (
                     <div key={monthIdx}>
-                        <h3 className="font-bold">{MONTHS[monthIdx]}</h3>
+                        <h3 className="font-bold">{MONTH_NAMES[monthIdx]}</h3>
                         {days.map(({ weekdayIdx, matchedTypes, isValid }, dayIdx) => (
                             <CalendarDay
                                 key={dayIdx}
