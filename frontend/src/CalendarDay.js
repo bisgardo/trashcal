@@ -54,17 +54,16 @@ export function CalendarDay({ matchedTypes, dayNum, weekdayIdx, isValid }) {
             </div>
             <table>
                 <tbody>
-                <tr>
-                    {classNames.map((c, i) => (
-                        <td key={i} className={c}>
-                            {/* to set height */}
-                            &nbsp;
-                        </td>
-                    ))}
-                </tr>
+                    <tr>
+                        {classNames.map((c, i) => (
+                            <td key={i} className={c}>
+                                {/* to set height */}
+                                &nbsp;
+                            </td>
+                        ))}
+                    </tr>
                 </tbody>
             </table>
         </div>
     );
 }
-

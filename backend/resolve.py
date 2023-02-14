@@ -21,6 +21,8 @@ def resolve_calendar(mitaffald_id, year):
     res = Calendar.query.filter_by(mitaffald_id=mitaffald_id, year=year).first()
     if res:
         return res.json, res.create_time
+    return None, None
+
     html = fetch_calendar_html(mitaffald_id, year)
     json, version = parse_calendar(html)
     # TODO Store NULL on failure.

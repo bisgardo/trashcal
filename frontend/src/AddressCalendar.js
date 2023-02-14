@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Calendar } from './Calendar';
 
 // TODO Make configurable.
@@ -24,7 +24,52 @@ function transformData(year, data) {
     }
 }
 
-export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIndex }) {
+function daysInMonth(monthIdx, isLeapYear) {
+    switch (monthIdx) {
+        case 0:
+            return 31;
+        case 1:
+            return isLeapYear ? 29 : 28;
+        case 2:
+            return 31;
+        case 3:
+            return 30;
+        case 4:
+            return 31;
+        case 5:
+            return 30;
+        case 6:
+            return 31;
+        case 7:
+            return 31;
+        case 8:
+            return 30;
+        case 9:
+            return 31;
+        case 10:
+            return 30;
+        case 11:
+            return 31;
+        default:
+            throw new Error('invalid month index');
+    }
+}
+
+function matchTypes(types, times, time) {
+    // Note that printing 'times' here prunes the value to 32 bits in Firefox.
+    // But not if you throw an exception right afterwards!
+    // (Try to make minimal example of this.)
+    return types.filter((t) => times.get(t).has(time));
+}
+
+function* genWeekdayIdxs(init) {
+    for (let res = init; true; res++) {
+        yield res % 7;
+    }
+}
+
+// TODO Extract into file.
+function useCalendarData(addressId, year, firstWeekdayIndex, isLeapYear) {
     const [data, setData] = useState(null);
     const [fetchError, setFetchError] = useState('');
     useEffect(() => {
@@ -45,9 +90,35 @@ export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIndex
 
         return () => abortController.abort(); // not sure why, but returning raw function (even when binding 'this') doesn't work
     }, [addressId, year]);
+    const monthsData = useMemo(() => {
+        if (!data) {
+            return null;
+        }
+        const { times, validFromTime } = data;
+        const types = Array.from(times.keys());
+
+        // TODO Just use local var instead?
+        const weekdayIdxs = genWeekdayIdxs(firstWeekdayIndex);
+        return Array.from({ length: 12 }, (_, monthIdx) =>
+            Array.from({ length: daysInMonth(monthIdx, isLeapYear) }, (_, dayIdx) => {
+                const time = Date.UTC(year, monthIdx, dayIdx + 1);
+                return {
+                    dayIdx,
+                    weekdayIdx: weekdayIdxs.next().value,
+                    matchedTypes: matchTypes(types, times, time),
+                    isValid: time >= validFromTime,
+                };
+            })
+        );
+    }, [data, year, isLeapYear, firstWeekdayIndex]);
+    return { monthsData, fetchError };
+}
+
+export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIndex }) {
+    const { monthsData, fetchError } = useCalendarData(addressId, year, firstWeekdayIndex, isLeapYear);
     return (
         <>
-            {data && <Calendar data={data} year={year} isLeapYear={isLeapYear} firstWeekdayIndex={firstWeekdayIndex} />}
+            {monthsData && <Calendar data={monthsData} />}
             {fetchError && <div>Fetch error: {fetchError}</div>}
         </>
     );
