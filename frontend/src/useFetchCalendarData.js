@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { BACKEND_URL_BASE, MONTH_NAMES, MONTHS_IN_YEAR } from './config';
+import { useEffect, useState } from 'react';
+import { BACKEND_URL_BASE, MONTH_NAMES } from './config';
 
 function parse(year, data) {
     const dates = data['dates'];
@@ -75,30 +75,27 @@ function buildCalendarData({ times, validFromTime }, year, isLeapYear, firstWeek
     );
 }
 
+async function load(url, abortController, year, isLeapYear, firstWeekdayIdx) {
+    try {
+        const res = await fetch(url, abortController);
+        const json = await res.json();
+        const fetchedData = parse(year, json);
+        return [buildCalendarData(fetchedData, year, isLeapYear, firstWeekdayIdx), ''];
+    } catch (e) {
+        return [null, e.message];
+    }
+}
+
 export function useFetchCalendarData(addressId, year, isLeapYear, firstWeekdayIdx) {
-    const [fetchedData, setFetchedData] = useState(null);
-    const [fetchError, setFetchError] = useState('');
+    const [res, setRes] = useState([null, null]);
     useEffect(() => {
         const url = new URL(`${BACKEND_URL_BASE}/trash_calendar/${addressId}`);
         url.searchParams.append('year', year);
 
         const abortController = new AbortController();
-        fetch(url, abortController)
-            .then((res) => res.json())
-            .then((res) => {
-                setFetchedData(parse(year, res));
-                setFetchError('');
-            })
-            .catch((e) => {
-                setFetchedData(null);
-                setFetchError(e.message);
-            });
+        load(url, abortController, year, isLeapYear, firstWeekdayIdx).then(setRes);
 
         return () => abortController.abort(); // not sure why, but returning raw function (even when binding 'this') doesn't work
-    }, [addressId, year]);
-    const data = useMemo(
-        () => (fetchedData ? buildCalendarData(fetchedData, year, isLeapYear, firstWeekdayIdx) : null),
-        [fetchedData, year, isLeapYear, firstWeekdayIdx]
-    );
-    return { data, fetchError };
+    }, [addressId, year, isLeapYear, firstWeekdayIdx]);
+    return res;
 }

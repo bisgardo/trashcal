@@ -14,8 +14,6 @@ export default function App() {
     const inputRef = useRef(null);
     const { selectedAddress } = useDawaAutocomplete(inputRef);
     const { addressId, addressError } = useMitaffaldAddressId(selectedAddress);
-
-    const addressText = selectedAddress?.tekst;
     return (
         <div className="container mx-auto px-24 py-8">
             <div className="rounded-xl border p-3 mt-4 mb-6 bg-stone-200">
@@ -33,9 +31,9 @@ export default function App() {
                 />
             </p>
             <p>
-                {addressText && (
+                {selectedAddress && (
                     <>
-                        Valgt adresse: {addressText} &middot; MitAffald ID:&nbsp;
+                        Valgt adresse: {selectedAddress.tekst} &middot; MitAffald ID:&nbsp;
                         {addressId ? (
                             <a target="_blank" rel="noreferrer" href={showAddressInfoUrlFromMitaffaldId(addressId)}>
                                 {addressId}

@@ -43,10 +43,12 @@ export function useDawaAutocomplete(inputRef) {
         const res = dawaAutocomplete(inputRef.current, {
             params: { kommunekode: DAWA_KOMMUNEKODE_AARHUS },
             select: (r) => {
-                // TODO This somehow screws up the DAWA component in a minor way
-                //      by leaving the cursor to input another component.
-                //      Should try an approach not using react-router?
-                navigate(`/${r.tekst}`);
+                // HACK to prevent DAWA from screwing up in a minor way,
+                //      where it adds a comma and leaves the cursor to input another
+                //      address component.
+                //      This wasn't a problem before we started to use React Router,
+                //      but it seems like putting the call in a timeout solves it...
+                setTimeout(() => navigate(`/${r.tekst}`));
             },
         });
         return res.destroy;
