@@ -78,23 +78,25 @@ function buildCalendarData({ times, validFromTime }, year, isLeapYear, firstWeek
 async function load(url, abortController, year, isLeapYear, firstWeekdayIdx) {
     try {
         const res = await fetch(url, abortController);
+        if (res.status !== 200) {
+            throw new Error(`calendar data lookup failed with HTTP status ${res.status} ${res.statusText}`);
+        }
         const json = await res.json();
         const fetchedData = parse(year, json);
         return [buildCalendarData(fetchedData, year, isLeapYear, firstWeekdayIdx), ''];
     } catch (e) {
-        return [null, e.message];
+        return [null, e.message || e];
     }
 }
 
 export function useFetchCalendarData(addressId, year, isLeapYear, firstWeekdayIdx) {
-    const [res, setRes] = useState([null, null]);
+    const [res, setRes] = useState([null, '']);
     useEffect(() => {
         const url = new URL(`${BACKEND_URL_BASE}/trash_calendar/${addressId}`);
         url.searchParams.append('year', year);
-
         const abortController = new AbortController();
+        setRes([null, '']);
         load(url, abortController, year, isLeapYear, firstWeekdayIdx).then(setRes);
-
         return () => abortController.abort(); // not sure why, but returning raw function (even when binding 'this') doesn't work
     }, [addressId, year, isLeapYear, firstWeekdayIdx]);
     return res;

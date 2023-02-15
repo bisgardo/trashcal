@@ -13,7 +13,7 @@ function showAddressInfoUrlFromMitaffaldId(mitaffaldId) {
 export default function App() {
     const inputRef = useRef(null);
     const { selectedAddress } = useDawaAutocomplete(inputRef);
-    const { addressId, addressError } = useMitaffaldAddressId(selectedAddress);
+    const [addressId, addressError] = useMitaffaldAddressId(selectedAddress);
     return (
         <div className="container mx-auto px-24 py-8">
             <div className="rounded-xl border p-3 mt-4 mb-6 bg-stone-200">

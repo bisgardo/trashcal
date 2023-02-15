@@ -10,32 +10,29 @@ function addressUrlFromDawa({ vejnavn, husnr, postnr, postnrnavn }) {
     return url;
 }
 
+async function load(url, abortController) {
+    try {
+        const res = await fetch(url, abortController);
+        if (res.status !== 200) {
+            throw new Error(`address lookup failed with HTTP status ${res.status} ${res.statusText}`);
+        }
+        const text = await res.text();
+        return [text, null];
+    } catch (e) {
+        return [null, e.message || e];
+    }
+}
+
 export function useMitaffaldAddressId(dawaAddress) {
-    const [addressId, setAddressId] = useState(null);
-    const [addressError, setAddressError] = useState('');
+    const [res, setRes] = useState([null, '']);
     useEffect(() => {
         if (dawaAddress) {
             const url = addressUrlFromDawa(dawaAddress);
             const abortController = new AbortController();
-            setAddressId(null);
-            setAddressError('');
-            fetch(url, abortController)
-                .then((res) => {
-                    if (res.status !== 200) {
-                        throw new Error(`address lookup failed with HTTP status ${res.status} ${res.statusText}`);
-                    }
-                    return res.text();
-                })
-                .then((res) => {
-                    setAddressId(res);
-                    setAddressError('');
-                })
-                .catch((e) => {
-                    setAddressId(null);
-                    setAddressError(e.message || e);
-                });
+            setRes([null, '']);
+            load(url, abortController).then(setRes);
             return () => abortController.abort(); // not sure why, but returning raw function (even when binding 'this') doesn't work
         }
     }, [dawaAddress]);
-    return { addressId, addressError };
+    return res;
 }
