@@ -4,7 +4,7 @@ import { useMitaffaldAddressId } from './useMitaffaldAddressId';
 import { AddressCalendar } from './AddressCalendar';
 import { YEAR_FIRST_WEEKDAY_IDX, YEAR_IS_LEAP_YEAR, YEAR, MITAFFALD_URL_VIEW_ADDRESS } from './config';
 
-function showAddressInfoUrlFromMitaffaldId(mitaffaldId) {
+function showAddressInfoUrl(mitaffaldId) {
     const url = new URL(MITAFFALD_URL_VIEW_ADDRESS);
     url.searchParams.append('address-selected-id', mitaffaldId);
     return url.toString();
@@ -35,7 +35,7 @@ export default function App() {
                     <>
                         Valgt adresse: {selectedAddress.tekst} &middot; MitAffald ID:&nbsp;
                         {addressId ? (
-                            <a target="_blank" rel="noreferrer" href={showAddressInfoUrlFromMitaffaldId(addressId)}>
+                            <a target="_blank" rel="noreferrer" href={showAddressInfoUrl(addressId)}>
                                 {addressId}
                             </a>
                         ) : (

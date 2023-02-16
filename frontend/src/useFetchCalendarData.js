@@ -60,19 +60,21 @@ function matchTypes(types, times, time) {
 
 function buildCalendarData({ times, validFromTime }, year, isLeapYear, firstWeekdayIdx) {
     const types = Array.from(times.keys());
-
     let nextWeekdayIdx = firstWeekdayIdx;
-    return Array.from(MONTH_NAMES, (_, monthIdx) =>
-        Array.from({ length: daysInMonth(monthIdx, isLeapYear) }, (_, dayIdx) => {
-            const time = Date.UTC(year, monthIdx, dayIdx + 1);
-            return {
-                dayIdx,
-                weekdayIdx: nextWeekdayIdx++ % 7,
-                matchedTypes: matchTypes(types, times, time),
-                isValid: time >= validFromTime,
-            };
-        })
-    );
+    return {
+        months: Array.from(MONTH_NAMES, (_, monthIdx) =>
+            Array.from({ length: daysInMonth(monthIdx, isLeapYear) }, (_, dayIdx) => {
+                const time = Date.UTC(year, monthIdx, dayIdx + 1);
+                return {
+                    dayIdx,
+                    weekdayIdx: nextWeekdayIdx++ % 7,
+                    matchedTypes: matchTypes(types, times, time),
+                    isValid: time >= validFromTime,
+                };
+            })
+        ),
+        types,
+    };
 }
 
 async function load(url, abortController, year, isLeapYear, firstWeekdayIdx) {
