@@ -35,7 +35,7 @@ function CalendarWithLegend({ months, types, typeNames }) {
     const [disabledTypes, setDisabledTypes] = useState(new Set());
     const selectedTypeNames = useMemo(() => {
         const res = new Map(Object.entries(typeNames));
-        disabledTypes.forEach(res.delete);
+        disabledTypes.forEach((t) => res.delete(t));
         return res;
     }, [typeNames, disabledTypes]);
     return (

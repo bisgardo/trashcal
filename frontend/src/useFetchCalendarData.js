@@ -99,7 +99,7 @@ export function useFetchCalendarData(addressId, year, isLeapYear, firstWeekdayId
         const abortController = new AbortController();
         setRes([null, '']);
         load(url, abortController, year, isLeapYear, firstWeekdayIdx).then(setRes);
-        return () => abortController.abort(); // not sure why, but returning raw function (even when binding 'this') doesn't work
+        return () => abortController.abort();
     }, [addressId, year, isLeapYear, firstWeekdayIdx]);
     return res;
 }

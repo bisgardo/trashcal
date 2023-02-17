@@ -35,6 +35,7 @@ export function useDawaAutocomplete(inputRef) {
                     })
                 )
                 .catch(console.error);
+            return () => abortController.abort();
         }
     }, [address]);
 
