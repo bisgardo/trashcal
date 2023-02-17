@@ -1,6 +1,6 @@
 import { Calendar } from './Calendar';
 import { useFetchCalendarData } from './useFetchCalendarData';
-import {useCallback, useMemo, useState} from "react";
+import { useCallback, useMemo, useState } from 'react';
 
 const TYPE_NAMES = {
     d: 'Deponi',
@@ -31,42 +31,56 @@ export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIdx }
     );
 }
 
-function CalendarWithLegend({months, types, typeNames}) {
-    const [unselectedTypes, setUnselectedTypes] = useState(new Set());
+function CalendarWithLegend({ months, types, typeNames }) {
+    const [disabledTypes, setDisabledTypes] = useState(new Set());
     const selectedTypeNames = useMemo(() => {
         const res = new Map(Object.entries(typeNames));
-        unselectedTypes.forEach((t) => res.delete(t))
+        disabledTypes.forEach(res.delete);
         return res;
-    }, [typeNames, unselectedTypes])
+    }, [typeNames, disabledTypes]);
     return (
         <>
-            <CalendarLegend types={types} typeNames={typeNames} unselectedTypes={unselectedTypes} setUnselectedTypes={setUnselectedTypes} />
+            <CalendarLegend
+                types={types}
+                typeNames={typeNames}
+                disabledTypes={disabledTypes}
+                setDisabledTypes={setDisabledTypes}
+            />
             <Calendar months={months} typeNames={selectedTypeNames} />
         </>
     );
 }
 
-function CalendarLegend({types, typeNames, unselectedTypes, setUnselectedTypes}) {
-    const toggleType = useCallback((t) => {
-        const newSelectedTypes = new Set(unselectedTypes);
-        if (unselectedTypes.has(t)) {
-            newSelectedTypes.delete(t);
-        } else {
-            newSelectedTypes.add(t);
-        }
-        setUnselectedTypes(newSelectedTypes);
-    }, [unselectedTypes, setUnselectedTypes])
+function CalendarLegend({ types, typeNames, disabledTypes, setDisabledTypes }) {
+    const toggleType = useCallback(
+        (t) => {
+            const newSelectedTypes = new Set(disabledTypes);
+            if (disabledTypes.has(t)) {
+                newSelectedTypes.delete(t);
+            } else {
+                newSelectedTypes.add(t);
+            }
+            setDisabledTypes(newSelectedTypes);
+        },
+        [disabledTypes, setDisabledTypes]
+    );
     return (
         <dl className="mb-2">
             {types.map((t) => {
                 let colorClass = `type-${t}`;
-                if (unselectedTypes.has(t)) {
-                    colorClass += '-disabled'
+                if (disabledTypes.has(t)) {
+                    colorClass += '-disabled';
                 }
                 return (
                     <>
                         <dt key={`color-${t}`} className={`w-4 h-4 inline-block align-middle mr-1 ${colorClass}`}></dt>
-                        <dd key={`name-${t}`} className="inline-block align-middle mr-6 cursor-pointer" onClick={() => toggleType(t)}>{typeNames[t]}</dd>
+                        <dd
+                            key={`name-${t}`}
+                            className="inline-block align-middle mr-6 cursor-pointer"
+                            onClick={() => toggleType(t)}
+                        >
+                            {typeNames[t]}
+                        </dd>
                     </>
                 );
             })}
