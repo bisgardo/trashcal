@@ -10,10 +10,10 @@ const CSS_CLASS_TYPE_MANY = 'type-many';
 const CSS_CLASS_INVALID = 'invalid';
 
 export function CalendarDay({ dayNum, weekdayIdx, matchedTypes, typeNames, isValid }) {
-    const names = matchedTypes.map((t) => typeNames.get(t)).filter((v) => v);
+    const names = matchedTypes.map((t) => typeNames.get(t)).filter(Boolean);
 
     const classNames = (() => {
-        const res = matchedTypes.map((t) => typeNames.has(t) && `type-${t}`).filter((v) => v);
+        const res = matchedTypes.map((t) => typeNames.has(t) && `type-${t}`).filter(Boolean);
         if (!res.length) {
             return [null]; // render single <td> with no class name
         }
