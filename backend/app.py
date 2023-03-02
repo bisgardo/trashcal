@@ -7,24 +7,31 @@ from flask_cors import CORS
 from db import db
 from resolve import resolve_address, resolve_calendar
 
-app = Flask(__name__)
+# Frontend is assumed to have been built using 'REACT_APP_BACKEND_URL_BASE='localhost:5000/api' npm run build'.
+frontend_path = '../frontend/build'
+
+# Serve the contents of 'frontend_path' as static files on the root path.
+app = Flask(__name__, static_folder=frontend_path, static_url_path='/')
 CORS(app)  # accept any origin
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trashcal.sqlite3'
 
 # TODO See 'https://github.com/app-generator/api-server-flask' for a "pro" example.
-# TODO Init DB in '@app.before_first_request'.
+# TODO Init DB in '@app.before_first_request'?
 
 db.init_app(app)
 with app.app_context():
     db.create_all()
 
 
-# TODO Serve frontend... And its assets...
+# Fall back to 'index.html' if the path doesn't match any static files in
+# the automatically generated static content handler (or the API routes).
+@app.errorhandler(404)
+def page_not_found(e):
+    return app.send_static_file('index.html')
 
-# TODO Validate inputs and handle errors.
 
-@app.route('/address')
+@app.route('/api/address')
 def address_id():
     query_params = request.args
     street_name = query_params['street_name']
@@ -37,7 +44,7 @@ def address_id():
     return res
 
 
-@app.route('/trash_calendar/<address_id>')
+@app.route('/api/trash_calendar/<address_id>')
 def trash_calendar(address_id):
     query_params = request.args
     year = query_params['year']
