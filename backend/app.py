@@ -12,10 +12,15 @@ CORS(app)  # accept any origin
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trashcal.sqlite3'
 
+# TODO See 'https://github.com/app-generator/api-server-flask' for a "pro" example.
+# TODO Init DB in '@app.before_first_request'.
+
 db.init_app(app)
 with app.app_context():
     db.create_all()
 
+
+# TODO Serve frontend... And its assets...
 
 # TODO Validate inputs and handle errors.
 

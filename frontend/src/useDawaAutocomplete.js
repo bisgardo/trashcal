@@ -2,14 +2,14 @@ import './dawa.scss';
 import { useEffect, useState } from 'react';
 import { dawaAutocomplete } from 'dawa-autocomplete2';
 import { useNavigate, useParams } from 'react-router-dom';
-import { DAWA_KOMMUNEKODE_AARHUS } from './config';
+import {DAWA_KOMMUNEKODE, DAWA_URL_QUERY_ADDRESS} from './config';
 
 export function useDawaAutocomplete(inputRef) {
     const [selectedAddress, setSelectedAddress] = useState(); // TODO Use 'useEffect' to refresh on change..?
     const { address } = useParams(); // fetch 'address' URL parameter
     useEffect(() => {
         if (address) {
-            const url = new URL('https://api.dataforsyningen.dk/adresser');
+            const url = new URL(DAWA_URL_QUERY_ADDRESS);
             url.searchParams.append('q', address);
             const abortController = new AbortController();
             fetch(url, abortController)
@@ -42,7 +42,7 @@ export function useDawaAutocomplete(inputRef) {
     const navigate = useNavigate();
     useEffect(() => {
         const res = dawaAutocomplete(inputRef.current, {
-            params: { kommunekode: DAWA_KOMMUNEKODE_AARHUS },
+            params: { kommunekode: DAWA_KOMMUNEKODE },
             select: (r) => {
                 // HACK to prevent DAWA from screwing up in a minor way,
                 //      where it adds a comma and leaves the cursor to input another
