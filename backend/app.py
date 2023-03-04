@@ -39,6 +39,10 @@ with app.app_context():
 
 # Fall back to 'index.html' if the path doesn't match any static files in
 # the automatically generated static content handler (or the API routes).
+# TODO Problem: Also catches cases where other handlers produce 404 error...
+#      Idea: Initialize app with 'static_url_path' set to 'None'.
+#      This should prevent the automatic handler from being set up but still allow
+#      'app.send_static_file' from our own route handler.
 @app.errorhandler(404)
 def page_not_found(e):
     print(type(e), e)

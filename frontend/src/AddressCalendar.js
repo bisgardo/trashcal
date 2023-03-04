@@ -21,6 +21,7 @@ const TYPE_NAMES = {
 };
 
 export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIdx }) {
+    // TODO Show spinner or loading message while loading.
     const [data, error] = useFetchCalendarData(addressId, year, isLeapYear, firstWeekdayIdx);
     return (
         <>
