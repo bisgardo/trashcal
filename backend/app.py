@@ -7,14 +7,27 @@ from flask_cors import CORS
 from db import db
 from resolve import resolve_address, resolve_calendar
 
-# Frontend is assumed to have been built using 'REACT_APP_BACKEND_URL_BASE='localhost:5000/api' npm run build'.
-frontend_path = '../frontend/build'
 
-# Serve the contents of 'frontend_path' as static files on the root path.
-app = Flask(__name__, static_folder=frontend_path, static_url_path='/')
-CORS(app)  # accept any origin
+# Serve the contents of 'frontend_path' as static files on the root path:
+# Passing 'static_url_path' on initialization ensures that the static route is registered.
+# Because we read the frontend path using 'app',
+# the correct value of 'static_folder' is not available at initialization time.
+# Luckily, Flask intentionally doesn't check that the folder exists before actually serving files,
+# so we can overwrite the value later.
+# It isn't really necessary as the server isn't started until the app is fully initialized,
+# but in order to be completely sure that we cannot unintentionally ship files from an unexpected directory,
+# we start by initializing 'static_folder' to a dummy path that should be invalid on all platforms.
+app = Flask(__name__, static_folder='</>', static_url_path='/')
+app.config.from_prefixed_env()
+
+# Let the env var 'FLASK_FRONTEND_PATH' override the default frontend path.
+# which by default (i.e. for local deployment) is assumed to have been built using
+# 'REACT_APP_BACKEND_URL_BASE="localhost:5000/api" npm run build'.
+app.static_folder = app.config.get('FRONTEND_PATH', '../frontend/build')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trashcal.sqlite3'
+
+CORS(app)  # accept any origin
 
 # TODO See 'https://github.com/app-generator/api-server-flask' for a "pro" example.
 # TODO Init DB in '@app.before_first_request'?
@@ -28,6 +41,7 @@ with app.app_context():
 # the automatically generated static content handler (or the API routes).
 @app.errorhandler(404)
 def page_not_found(e):
+    print(type(e), e)
     return app.send_static_file('index.html')
 
 
