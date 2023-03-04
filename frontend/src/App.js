@@ -17,7 +17,7 @@ export default function App() {
     return (
         <div className="container mx-auto px-24 py-8">
             <div className="rounded-xl border p-3 mt-4 mb-6 bg-stone-200">
-                <h1 className="text-xl">Trash Cal: Affaldskalender for Aarhus Kommune</h1>
+                <h1 className="text-xl">Affaldskalender for Aarhus Kommune</h1>
             </div>
             <p className="relative w-full">
                 <label htmlFor="input" className="text-lg">
