@@ -7,14 +7,20 @@ from flask_cors import CORS
 from db import db
 from resolve import resolve_address, resolve_calendar
 
-# Frontend is assumed to have been built using 'REACT_APP_BACKEND_URL_BASE='localhost:5000/api' npm run build'.
-frontend_path = '../frontend/build'
 
+# TODO Solve chicken-egg issue with reading frontend path using 'app' and using it to initialize 'app'.
 # Serve the contents of 'frontend_path' as static files on the root path.
 app = Flask(__name__, static_folder=frontend_path, static_url_path='/')
-CORS(app)  # accept any origin
+
+app.config.from_prefixed_env()
+
+# By default, the frontend is assumed to have been built using
+# 'REACT_APP_BACKEND_URL_BASE="localhost:5000/api" npm run build'.
+frontend_path = app.config['FRONTEND_PATH'] or '../frontend/build'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trashcal.sqlite3'
+
+CORS(app)  # accept any origin
 
 # TODO See 'https://github.com/app-generator/api-server-flask' for a "pro" example.
 # TODO Init DB in '@app.before_first_request'?
