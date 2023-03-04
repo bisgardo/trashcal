@@ -41,6 +41,7 @@ with app.app_context():
 # the automatically generated static content handler (or the API routes).
 @app.errorhandler(404)
 def page_not_found(e):
+    print(type(e), e)
     return app.send_static_file('index.html')
 
 
