@@ -8,15 +8,22 @@ from db import db
 from resolve import resolve_address, resolve_calendar
 
 
-# TODO Solve chicken-egg issue with reading frontend path using 'app' and using it to initialize 'app'.
-# Serve the contents of 'frontend_path' as static files on the root path.
-app = Flask(__name__, static_folder=frontend_path, static_url_path='/')
-
+# Serve the contents of 'frontend_path' as static files on the root path:
+# Passing 'static_url_path' on initialization ensures that the static route is registered.
+# Because we read the frontend path using 'app',
+# the correct value of 'static_folder' is not available at initialization time.
+# Luckily, Flask intentionally doesn't check that the folder exists before actually serving files,
+# so we can overwrite the value later.
+# It isn't really necessary as the server isn't started until the app is fully initialized,
+# but in order to be completely sure that we cannot unintentionally ship files from an unexpected directory,
+# we start by initializing 'static_folder' to a dummy path that should be invalid on all platforms.
+app = Flask(__name__, static_folder='</>', static_url_path='/')
 app.config.from_prefixed_env()
 
-# By default, the frontend is assumed to have been built using
+# Let the env var 'FLASK_FRONTEND_PATH' override the default frontend path.
+# which by default (i.e. for local deployment) is assumed to have been built using
 # 'REACT_APP_BACKEND_URL_BASE="localhost:5000/api" npm run build'.
-frontend_path = app.config['FRONTEND_PATH'] or '../frontend/build'
+app.static_folder = app.config.get('FRONTEND_PATH', '../frontend/build')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trashcal.sqlite3'
 
