@@ -22,3 +22,4 @@ COPY --from=frontend /build/build ./frontend
 ENV FLASK_FRONTEND_PATH='./frontend'
 #ENTRYPOINT ["flask", "--app=./app.py", "run", "--host=0.0.0.0", "--port=8080"]
 ENTRYPOINT ["gunicorn", "--bind=0.0.0.0:8080", "app:app"]
+EXPOSE 8080
