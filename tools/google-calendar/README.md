@@ -1,19 +1,24 @@
-# trashcal
+# trashcal - Google Calendar
 
-Tool for inserting trash pickup dates for a given Danish address into a given calendar in Google Calendar.
+Small tool for inserting trash pickup dates for a given Danish address into a given calendar in Google Calendar.
 The inserted events are "all-day" and use the default notification settings for the calendar.
 
-While a significantly less than great deal of time has been spent polishing this project,
+While a significantly less than great deal of time has been spent polishing this tool,
 it's pretty simple to use: Complete instructions are provided below.
 
 *History*
 
 The project has been used once a year since Mar 2019; evolving a little each time.
-It was last used in Jan 2023, where it was rewritten to a single Python script.
+It was last used in Jan 2023, where it was rewritten into a single Python script.
+
+In Mar 2023, as the project was partly migrated into a web app
+(which can render a calendar for any address but missing the Google Calendar part),
+the tool was moved into this directory.
+This migration incurred a bunch of functional changes that have only been superficially verified.
 
 ## Install
 
-The tool consists of a Python script.
+The tool consists of a Python script that uses the web backend as a library.
 
 The Python dependencies are installed by creating a virtual env in the root folder
 and installing the dependencies:
