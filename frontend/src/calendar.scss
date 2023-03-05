@@ -1,0 +1,187 @@
+/* CALENDAR LAYOUT */
+
+.day {
+    @apply mb-0.5;
+
+    .text {
+        @apply px-1 absolute;
+    }
+
+    &.invalid {
+        @apply text-gray-300;
+    }
+
+    table {
+        @apply border w-full;
+    }
+
+    td {
+        @apply p-0;
+    }
+}
+
+/* TRASH COLORS */
+
+.type-many {
+    @apply bg-amber-900;
+}
+.type-many {
+    @apply bg-amber-600;
+}
+
+.type-unknown {
+    @apply bg-gray-400;
+}
+.type-unknown.invalid {
+    @apply bg-gray-200;
+}
+
+.type-d {
+    @apply bg-lime-400;
+}
+.type-d-disabled {
+    @apply border border-lime-400;
+}
+.type-d.invalid {
+    @apply bg-lime-200;
+}
+
+.type-e {
+    @apply bg-neutral-400;
+}
+.type-e-disabled {
+    @apply border border-neutral-400;
+}
+.type-e.invalid {
+    @apply bg-neutral-200;
+}
+
+.type-f {
+    @apply bg-red-400;
+}
+.type-f-disabled {
+    @apply border border-red-400;
+}
+.type-f.invalid {
+    @apply bg-red-200;
+}
+
+.type-G {
+    @apply bg-sky-400;
+}
+.type-G-disabled {
+    @apply border border-sky-400;
+}
+.type-G.invalid {
+    @apply bg-sky-200;
+}
+
+.type-gpm {
+    @apply bg-blue-400;
+}
+.type-gpm-disabled {
+    @apply border border-blue-400;
+}
+.type-gpm.invalid {
+    @apply bg-blue-200;
+}
+
+.type-h {
+    @apply bg-green-400;
+}
+.type-h-disabled {
+    @apply border border-green-400;
+}
+.type-h.invalid {
+    @apply bg-green-200;
+}
+
+.type-hh {
+    @apply bg-gray-400;
+}
+.type-hh-disabled {
+    @apply border border-gray-400;
+}
+.type-hh.invalid {
+    @apply bg-gray-200;
+}
+
+.type-jm {
+    @apply bg-zinc-400;
+}
+.type-jm-disabled {
+    @apply border border-zinc-400;
+}
+.type-jm.invalid {
+    @apply bg-zinc-200;
+}
+
+.type-m {
+    @apply bg-teal-400;
+}
+.type-m-disabled {
+    @apply border border-teal-400;
+}
+.type-m.invalid {
+    @apply bg-teal-200;
+}
+
+.type-p {
+    @apply bg-yellow-400;
+}
+.type-p-disabled {
+    @apply border border-yellow-400;
+}
+.type-p.invalid {
+    @apply bg-yellow-200;
+}
+
+.type-pp {
+    @apply bg-pink-400;
+}
+.type-pp-disabled {
+    @apply border border-pink-400;
+}
+.type-pp.invalid {
+    @apply bg-pink-200;
+}
+
+.type-s {
+    @apply bg-red-400;
+}
+.type-s-disabled {
+    @apply border border-red-400;
+}
+.type-s.invalid {
+    @apply bg-red-200;
+}
+
+.type-S {
+    @apply bg-rose-400;
+}
+.type-S-disabled {
+    @apply border border-rose-400;
+}
+.type-S.invalid {
+    @apply bg-rose-200;
+}
+
+.type-g {
+    @apply bg-slate-400;
+}
+.type-g-disabled {
+    @apply border border-slate-400;
+}
+.type-g.invalid {
+    @apply bg-slate-200;
+}
+
+.type-r {
+    @apply bg-emerald-400;
+}
+.type-r-disabled {
+    @apply border border-emerald-400;
+}
+.type-r.invalid {
+    @apply bg-emerald-200;
+}
