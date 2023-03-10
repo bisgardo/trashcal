@@ -2,7 +2,7 @@ import './dawa.scss';
 import { useEffect, useState } from 'react';
 import { dawaAutocomplete } from 'dawa-autocomplete2';
 import { useNavigate, useParams } from 'react-router-dom';
-import {DAWA_KOMMUNEKODE, DAWA_URL_QUERY_ADDRESS} from './config';
+import { DAWA_KOMMUNEKODE, DAWA_URL_QUERY_ADDRESS } from './config';
 
 export function useDawaAutocomplete(inputRef) {
     const [selectedAddress, setSelectedAddress] = useState(); // TODO Use 'useEffect' to refresh on change..?

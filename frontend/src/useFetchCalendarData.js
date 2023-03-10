@@ -9,7 +9,17 @@ function parse(year, data) {
             times: new Map(
                 Object.entries(dates).map(([type, dates]) => [
                     type,
-                    new Set(dates.map((monthDay) => Date.parse(`${year}-${monthDay}`))),
+                    new Set(
+                        dates.map((monthDay) => {
+                            // Parsing number instead of using `Date.parse(`${year}-${month}-${day}`)`
+                            // because the lack of leading zeros on month and date causes Chrome to parse
+                            // such dates in the local time zone instead of UTC!
+                            const idx = monthDay.indexOf('-');
+                            const month = Number.parseInt(monthDay.slice(0, idx), 10);
+                            const day = Number.parseInt(monthDay.slice(idx + 1), 10);
+                            return Date.UTC(year, month - 1, day);
+                        })
+                    ),
                 ])
             ),
             validFromTime: Date.parse(`${year}-${validFrom}`),

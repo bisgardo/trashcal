@@ -7,7 +7,8 @@ const DAWA_URL_QUERY_ADDRESS_DATAFORSYNINGEN = 'https://api.dataforsyningen.dk/a
 const DAWA_KOMMUNEKODE_AARHUS = '0751';
 
 export const BACKEND_URL_BASE = process.env.REACT_APP_BACKEND_URL_BASE || `${window.location.origin}/api`; // default to path '/api' relative to the current URL root
-export const DAWA_URL_QUERY_ADDRESS = process.env.REACT_APP_DAWA_URL_QUERY_ADDRESS || DAWA_URL_QUERY_ADDRESS_DATAFORSYNINGEN;
+export const DAWA_URL_QUERY_ADDRESS =
+    process.env.REACT_APP_DAWA_URL_QUERY_ADDRESS || DAWA_URL_QUERY_ADDRESS_DATAFORSYNINGEN;
 export const DAWA_KOMMUNEKODE = process.env.REACT_APP_DAWA_URL_QUERY_ADDRESS || DAWA_KOMMUNEKODE_AARHUS;
 
 // TODO: Use "current" year by default and add optional query parameter to override it.

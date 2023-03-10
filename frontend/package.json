@@ -15,7 +15,7 @@
     },
     "scripts": {
         "fmt": "prettier --write .",
-        "start": "REACT_APP_BACKEND_URL_BASE='http://localhost:5000' react-scripts start",
+        "start": "REACT_APP_BACKEND_URL_BASE='http://localhost:5000/api' react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
