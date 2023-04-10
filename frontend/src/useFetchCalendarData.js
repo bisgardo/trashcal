@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react';
 import { BACKEND_URL_BASE, MONTH_NAMES } from './config';
 
+function parsePatchedDate(year, monthDay) {
+    // Parsing numbers instead of using `Date.parse(`${year}-${monthDay}`)` because the lack of leading zeros
+    // on month and day causes Safari (on iOS at least) to parse such a date as NaN!
+    // And Chrome to use the local time zone instead of UTC..!
+    const idx = monthDay.indexOf('-');
+    const month = Number.parseInt(monthDay.slice(0, idx), 10);
+    const day = Number.parseInt(monthDay.slice(idx + 1), 10);
+    return Date.UTC(year, month - 1, day);
+}
+
 function parse(year, data) {
     const dates = data['dates'];
     const validFrom = data['valid_from_date'];
@@ -9,20 +19,10 @@ function parse(year, data) {
             times: new Map(
                 Object.entries(dates).map(([type, dates]) => [
                     type,
-                    new Set(
-                        dates.map((monthDay) => {
-                            // Parsing number instead of using `Date.parse(`${year}-${month}-${day}`)`
-                            // because the lack of leading zeros on month and date causes Chrome to parse
-                            // such dates in the local time zone instead of UTC!
-                            const idx = monthDay.indexOf('-');
-                            const month = Number.parseInt(monthDay.slice(0, idx), 10);
-                            const day = Number.parseInt(monthDay.slice(idx + 1), 10);
-                            return Date.UTC(year, month - 1, day);
-                        })
-                    ),
+                    new Set(dates.map((monthDay) => parsePatchedDate(year, monthDay))),
                 ])
             ),
-            validFromTime: Date.parse(`${year}-${validFrom}`),
+            validFromTime: parsePatchedDate(year, validFrom),
         };
     } catch {
         console.error('invalid data:', dates);
