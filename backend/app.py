@@ -25,11 +25,13 @@ app.config.from_prefixed_env()
 # 'REACT_APP_BACKEND_URL_BASE="localhost:5000/api" npm run build'.
 app.static_folder = app.config.get('FRONTEND_PATH', '../frontend/build')
 
+# TODO Expect this to be set in deployment config?
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trashcal.sqlite3'
 
 CORS(app)  # accept any origin
 
 # TODO See 'https://github.com/app-generator/api-server-flask' for a "pro" example.
+#      And 'https://github.com/4GeeksAcademy/react-flask-hello'...
 # TODO Init DB in '@app.before_first_request'?
 
 db.init_app(app)
