@@ -41,7 +41,11 @@ export function useDawaAutocomplete(inputRef) {
 
     const navigate = useNavigate();
     useEffect(() => {
-        const res = dawaAutocomplete(inputRef.current, {
+        // inputRef.current.addEventListener('blur', (e) => e.stopImmediatePropagation());
+        const reset = fixBlurOnTouch(inputRef.current);
+        const { destroy } = dawaAutocomplete(inputRef.current, {
+            adgangsadresserOnly: true, // don't include floor, suite
+            stormodtagerpostnumre: false, // exclude special zip codes dedicated large organizations
             params: { kommunekode: DAWA_KOMMUNEKODE },
             select: (r) => {
                 // HACK to prevent DAWA from screwing up in a minor way,
@@ -52,7 +56,39 @@ export function useDawaAutocomplete(inputRef) {
                 setTimeout(() => navigate(`/${r.tekst}`));
             },
         });
-        return res.destroy;
+        return () => {
+            destroy();
+            reset();
+        }
     }, [inputRef, navigate]);
     return { selectedAddress };
+}
+
+function fixBlurOnTouch(target) {
+    let isTouching = false;
+    function onTouchStart() {
+        console.log('scroll start');
+        isTouching = true;
+        window.requestAnimationFrame(() => {
+            isTouching = false;
+        })
+    }
+    function onTouchEnd() {
+        // not supported on ios...
+        console.log('scroll end');
+        isTouching = false;
+    }
+    function onBlurOverride(e) {
+        if (isTouching) {
+            e.stopImmediatePropagation();
+        }
+    }
+    document.addEventListener('scroll', onTouchStart);
+    // document.addEventListener('scrollend', onTouchEnd);
+    target.addEventListener('blur', onBlurOverride, true);
+    return () => {
+        document.removeEventListener('scroll', onTouchStart);
+        // document.removeEventListener('scrollend', onTouchEnd);
+        target.removeEventListener('blur', onBlurOverride);
+    }
 }
