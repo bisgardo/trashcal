@@ -11,6 +11,10 @@
         @apply text-gray-300;
     }
 
+    &.today {
+        @apply font-bold border-slate-500;
+    }
+
     table {
         @apply border w-full;
     }

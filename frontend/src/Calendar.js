@@ -8,8 +8,9 @@ const CSS_CLASS_CONTAINER = 'day';
 const CSS_CLASS_TEXT = 'text';
 const CSS_CLASS_TYPE_MANY = 'type-many';
 const CSS_CLASS_INVALID = 'invalid';
+const CSS_CLASS_TODAY = 'today';
 
-export function CalendarDay({ dayNum, weekdayIdx, matchedTypes, typeNames, isValid }) {
+export function CalendarDay({ dayNum, weekdayIdx, matchedTypes, typeNames, isValid, isToday }) {
     const names = matchedTypes.map((t) => typeNames.get(t)).filter(Boolean);
 
     const classNames = (() => {
@@ -26,6 +27,9 @@ export function CalendarDay({ dayNum, weekdayIdx, matchedTypes, typeNames, isVal
     const containerClasses = [CSS_CLASS_CONTAINER];
     if (!isValid) {
         containerClasses.push(CSS_CLASS_INVALID);
+    }
+    if (isToday) {
+        containerClasses.push(CSS_CLASS_TODAY);
     }
     return (
         <div className={containerClasses.join('\n')} title={names.join('\n')}>
@@ -48,7 +52,9 @@ export function CalendarDay({ dayNum, weekdayIdx, matchedTypes, typeNames, isVal
     );
 }
 
-function CalendarMonth({ monthIdx, data, typeNames }) {
+function CalendarMonth({ monthIdx, data, typeNames, today }) {
+    // The index of today's day in month if today is in that month and 'false' otherwise.
+    const todayDayIdx = today.monthIdx === monthIdx && today.dayIdx;
     return (
         <div>
             <h3 className="font-bold">{MONTH_NAMES[monthIdx]}</h3>
@@ -60,17 +66,18 @@ function CalendarMonth({ monthIdx, data, typeNames }) {
                     matchedTypes={matchedTypes}
                     typeNames={typeNames}
                     isValid={isValid}
+                    isToday={todayDayIdx === dayIdx}
                 />
             ))}
         </div>
     );
 }
 
-export function Calendar({ months, typeNames }) {
+export function Calendar({ months, typeNames, today }) {
     return (
         <div className="grid lg:grid-cols-12 md:grid-cols-6 sm:grid-cols-3 gap-4">
             {months.map((days, monthIdx) => (
-                <CalendarMonth key={monthIdx} monthIdx={monthIdx} data={days} typeNames={typeNames} />
+                <CalendarMonth key={monthIdx} monthIdx={monthIdx} data={days} typeNames={typeNames} today={today} />
             ))}
         </div>
     );

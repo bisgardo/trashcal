@@ -23,16 +23,24 @@ const TYPE_NAMES = {
 export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIdx }) {
     // TODO Show spinner or loading message while loading.
     const [data, error] = useFetchCalendarData(addressId, year, isLeapYear, firstWeekdayIdx);
+    const today = useMemo(() => {
+        // Compute month/day of "today", as resolved in the local timezone.
+        const now = new Date();
+        if (year !== now.getFullYear()) {
+            return undefined;
+        }
+        return { monthIdx: now.getMonth(), dayIdx: now.getDate() - 1 };
+    }, [year]);
     return (
         <>
             <h1 className="font-medium leading-tight text-5xl mt-0 mb-2 text-green-600">Kalender</h1>
             {error && <div>Fetch error: {error}</div>}
-            {data && <CalendarWithLegend {...data} typeNames={TYPE_NAMES} />}
+            {data && <CalendarWithLegend {...data} typeNames={TYPE_NAMES} today={today} />}
         </>
     );
 }
 
-function CalendarWithLegend({ months, types, typeNames }) {
+function CalendarWithLegend({ months, types, typeNames, today }) {
     const [disabledTypes, setDisabledTypes] = useState(new Set());
     const selectedTypeNames = useMemo(() => {
         const res = new Map(Object.entries(typeNames));
@@ -47,7 +55,7 @@ function CalendarWithLegend({ months, types, typeNames }) {
                 disabledTypes={disabledTypes}
                 setDisabledTypes={setDisabledTypes}
             />
-            <Calendar months={months} typeNames={selectedTypeNames} />
+            <Calendar months={months} typeNames={selectedTypeNames} today={today} />
         </>
     );
 }
