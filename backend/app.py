@@ -5,7 +5,7 @@ from flask import Flask, request, abort
 from flask_cors import CORS
 
 from db import db
-from resolve import resolve_address, resolve_calendar
+from query import query_address, query_calendar, AddressNotFoundError, CalendarNotFoundError
 
 
 # Serve the contents of 'frontend_path' as static files on the root path:
@@ -57,27 +57,32 @@ def address_id():
     street_name = query_params['street_name']
     house_number = query_params['house_number']
     postcode = query_params['postcode']
-    postcode_name = query_params['postcode_name']
-    res, _ = resolve_address(street_name, house_number, postcode, postcode_name)
-    if not res:
-        abort(404)
-    return res
+    _ = query_params['postcode_name']
+    try:
+        res = query_address(street_name, house_number, postcode)
+        if not res:
+            # Address was looked up but did not resolve to a MitAffald ID.
+            raise AddressNotFoundError(street_name, house_number, postcode)
+        return res
+    except AddressNotFoundError as e:
+        abort(404, description=f"no MitAffald ID found for address (street_name='{e.street_name}', house_number='{e.house_number}', postcode='{e.postcode}')")
 
 
 @app.route('/api/trash_calendar/<address_id>')
 def trash_calendar(address_id):
     query_params = request.args
     year = query_params['year']
-    res, valid_from_time = resolve_calendar(address_id, year)
-    if not res:
-        abort(404)
-    # TODO Mitaffald (sometimes!) doesn't include data for the current day -
-    #      so valid time is the day *after* the create time (unless "today" is included in the data).
-    if not valid_from_time:
-        valid_from_time = datetime.utcnow()
-    # Adding '-' inside the format specifier eliminates leading '0'.
-    valid_from_date = valid_from_time.strftime('%-m-%-d')
-    return {
-        'dates': res,
-        'valid_from_date': valid_from_date,
-    }
+    try:
+        dates_json, valid_from_time = query_calendar(address_id, year)
+        # TODO MitAffald (sometimes!) doesn't include data for the current day -
+        #      so valid time is the day *after* the create time (unless "today" is included in the data).
+        if not valid_from_time:
+            valid_from_time = datetime.utcnow()
+        # Adding '-' inside the format specifier eliminates leading '0'.
+        valid_from_date = valid_from_time.strftime('%-m-%-d')
+        return {
+            'dates': dates_json,  # is None if MitAffald import failed
+            'valid_from_date': valid_from_date,
+        }
+    except CalendarNotFoundError as e:
+        abort(404, description=f"no calendar data imported for MitAffald ID '{e.mitaffald_id}'")

@@ -77,7 +77,7 @@ function buildCalendarData({ times, validFromTime }, year, isLeapYear, firstWeek
                 const time = Date.UTC(year, monthIdx, dayIdx + 1);
                 return {
                     dayIdx,
-                    weekdayIdx: nextWeekdayIdx++ % 7,
+                    weekdayIdx: (nextWeekdayIdx++) % 7,
                     matchedTypes: matchTypes(types, times, time),
                     isValid: time >= validFromTime,
                 };
