@@ -33,9 +33,18 @@ export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIdx }
     }, [year]);
     return (
         <>
-            <h1 className="font-medium leading-tight text-5xl mt-0 mb-2 text-green-600">Kalender</h1>
+            <h1 className='font-medium leading-tight text-5xl mt-0 mb-2 text-green-600'>Kalender</h1>
             {error && <div>Fetch error: {error}</div>}
-            {data && <CalendarWithLegend {...data} typeNames={TYPE_NAMES} today={today} />}
+            {data && <CalendarOrError calendar={data.calendar} today={today} />}
+        </>
+    );
+}
+
+function CalendarOrError({ calendar, today }) {
+    return (
+        <>
+            {!calendar && <em>Ingen kalenderdata fundet for denne adresse.</em>}
+            {calendar && <CalendarWithLegend {...calendar} typeNames={TYPE_NAMES} today={today} />}
         </>
     );
 }
@@ -71,10 +80,10 @@ function CalendarLegend({ types, typeNames, disabledTypes, setDisabledTypes }) {
             }
             setDisabledTypes(newSelectedTypes);
         },
-        [disabledTypes, setDisabledTypes]
+        [disabledTypes, setDisabledTypes],
     );
     return (
-        <dl className="mb-2">
+        <dl className='mb-2'>
             {types.map((t) => {
                 let colorClass = `type-${t}`;
                 if (disabledTypes.has(t)) {
@@ -85,7 +94,7 @@ function CalendarLegend({ types, typeNames, disabledTypes, setDisabledTypes }) {
                         <dt key={`color-${t}`} className={`w-4 h-4 inline-block align-middle mr-1 ${colorClass}`}></dt>
                         <dd
                             key={`name-${t}`}
-                            className="inline-block align-middle mr-6 cursor-pointer"
+                            className='inline-block align-middle mr-6 cursor-pointer'
                             onClick={() => toggleType(t)}
                         >
                             {typeNames[t]}

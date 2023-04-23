@@ -13,6 +13,7 @@ function addressUrlFromDawa({ vejnavn, husnr, postnr, postnrnavn }) {
 async function load(url, abortController) {
     try {
         const res = await fetch(url, abortController);
+        // TODO Handle 404 gracefully.
         if (res.status !== 200) {
             throw new Error(`address lookup failed with HTTP status ${res.status} ${res.statusText}`);
         }
@@ -23,6 +24,7 @@ async function load(url, abortController) {
     }
 }
 
+// TODO Rename to 'useFetch...' or something for the hooks to be named consistently.
 export function useMitaffaldAddressId(dawaAddress) {
     const [res, setRes] = useState([null, '']);
     useEffect(() => {

@@ -11,21 +11,28 @@ function parsePatchedDate(year, monthDay) {
     return Date.UTC(year, month - 1, day);
 }
 
+function parseDates(dates, year) {
+    if (dates === null) {
+        return null;
+    }
+    return new Map(
+        Object.entries(dates).map(([type, dates]) => [
+            type,
+            new Set(dates.map((monthDay) => parsePatchedDate(year, monthDay))),
+        ]),
+    );
+}
+
 function parse(year, data) {
     const dates = data['dates'];
     const validFrom = data['valid_from_date'];
     try {
         return {
-            times: new Map(
-                Object.entries(dates).map(([type, dates]) => [
-                    type,
-                    new Set(dates.map((monthDay) => parsePatchedDate(year, monthDay))),
-                ])
-            ),
+            times: parseDates(dates, year), // null if 'dates' is null
             validFromTime: parsePatchedDate(year, validFrom),
         };
     } catch {
-        console.error('invalid data:', dates);
+        console.error('invalid data:', data);
         throw new Error('invalid data (logged to console)');
     }
 }
@@ -68,9 +75,12 @@ function matchTypes(types, times, time) {
     return types.filter((t) => times.get(t).has(time));
 }
 
-function buildCalendarData({ times, validFromTime }, year, isLeapYear, firstWeekdayIdx) {
+function buildCalendarData(times, validFromTime, year, isLeapYear, firstWeekdayIdx) {
+    if (times === null) {
+        return null;
+    }
     const types = Array.from(times.keys());
-    let nextWeekdayIdx = firstWeekdayIdx;
+    let nextWeekdayIdx = firstWeekdayIdx; // mutated inside "loop" below
     return {
         months: Array.from(MONTH_NAMES, (_, monthIdx) =>
             Array.from({ length: daysInMonth(monthIdx, isLeapYear) }, (_, dayIdx) => {
@@ -81,7 +91,7 @@ function buildCalendarData({ times, validFromTime }, year, isLeapYear, firstWeek
                     matchedTypes: matchTypes(types, times, time),
                     isValid: time >= validFromTime,
                 };
-            })
+            }),
         ),
         types,
     };
@@ -94,8 +104,8 @@ async function load(url, abortController, year, isLeapYear, firstWeekdayIdx) {
             throw new Error(`calendar data lookup failed with HTTP status ${res.status} ${res.statusText}`);
         }
         const json = await res.json();
-        const fetchedData = parse(year, json);
-        return [buildCalendarData(fetchedData, year, isLeapYear, firstWeekdayIdx), ''];
+        let { times, validFromTime } = parse(year, json);
+        return [{calendar: buildCalendarData(times, validFromTime, year, isLeapYear, firstWeekdayIdx)}, ''];
     } catch (e) {
         return [null, e.message || e];
     }

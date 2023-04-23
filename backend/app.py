@@ -5,7 +5,7 @@ from flask import Flask, request, abort
 from flask_cors import CORS
 
 from db import db
-from query import query_address, query_calendar, AddressNotFoundError, CalendarNotFoundError
+from db_query import query_address, query_calendar, AddressNotFoundError, CalendarNotFoundError
 
 
 # Serve the contents of 'frontend_path' as static files on the root path:
