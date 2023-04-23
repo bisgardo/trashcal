@@ -19,7 +19,7 @@ function parseDates(dates, year) {
         Object.entries(dates).map(([type, dates]) => [
             type,
             new Set(dates.map((monthDay) => parsePatchedDate(year, monthDay))),
-        ]),
+        ])
     );
 }
 
@@ -87,11 +87,11 @@ function buildCalendarData(times, validFromTime, year, isLeapYear, firstWeekdayI
                 const time = Date.UTC(year, monthIdx, dayIdx + 1);
                 return {
                     dayIdx,
-                    weekdayIdx: (nextWeekdayIdx++) % 7,
+                    weekdayIdx: nextWeekdayIdx++ % 7,
                     matchedTypes: matchTypes(types, times, time),
                     isValid: time >= validFromTime,
                 };
-            }),
+            })
         ),
         types,
     };
@@ -105,7 +105,7 @@ async function load(url, abortController, year, isLeapYear, firstWeekdayIdx) {
         }
         const json = await res.json();
         let { times, validFromTime } = parse(year, json);
-        return [{calendar: buildCalendarData(times, validFromTime, year, isLeapYear, firstWeekdayIdx)}, ''];
+        return [{ calendar: buildCalendarData(times, validFromTime, year, isLeapYear, firstWeekdayIdx) }, ''];
     } catch (e) {
         return [null, e.message || e];
     }
