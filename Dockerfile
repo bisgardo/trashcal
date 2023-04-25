@@ -20,6 +20,7 @@ RUN pip install \
 COPY ./backend/*.py ./
 COPY --from=frontend /build/build ./frontend
 ENV FLASK_FRONTEND_PATH='./frontend'
+#ENV PYTHONUNBUFFERED=1 # alternative to running Docker with '--tty' to avoid excessive buffering
 #ENTRYPOINT ["flask", "--app=./app.py", "run", "--host=0.0.0.0", "--port=8080"]
 ENTRYPOINT ["gunicorn", "--bind=0.0.0.0:8080", "app:app"]
 EXPOSE 8080

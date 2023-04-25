@@ -35,7 +35,16 @@ export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIdx }
         <>
             <h1 className="font-medium leading-tight text-5xl mt-0 mb-2 text-green-600">Kalender</h1>
             {error && <div>Fetch error: {error}</div>}
-            {data && <CalendarWithLegend {...data} typeNames={TYPE_NAMES} today={today} />}
+            {data && <CalendarOrError calendar={data.calendar} today={today} />}
+        </>
+    );
+}
+
+function CalendarOrError({ calendar, today }) {
+    return (
+        <>
+            {!calendar && <em>Ingen kalenderdata fundet for denne adresse.</em>}
+            {calendar && <CalendarWithLegend {...calendar} typeNames={TYPE_NAMES} today={today} />}
         </>
     );
 }

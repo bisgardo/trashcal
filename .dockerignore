@@ -1,0 +1,8 @@
+.*
+cloudflare
+google-calendar
+
+backend/data
+backend/instance
+backend/venv
+frontend/node_modules
