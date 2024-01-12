@@ -1,4 +1,5 @@
 import { Calendar } from './Calendar';
+import { getWeekdayOfJan1, isLeapYear } from './time';
 import { useFetchCalendarData } from './useFetchCalendarData';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -20,17 +21,28 @@ const TYPE_NAMES = {
     r: 'Restaffald',
 };
 
-export function AddressCalendar({ addressId, year, isLeapYear, firstWeekdayIdx }) {
+export function AddressCalendar({ addressId }) {
     // TODO Show spinner or loading message while loading.
-    const [data, error] = useFetchCalendarData(addressId, year, isLeapYear, firstWeekdayIdx);
     const today = useMemo(() => {
-        // Compute month/day of "today", as resolved in the local timezone.
         const now = new Date();
-        if (year !== now.getFullYear()) {
-            return undefined;
-        }
-        return { monthIdx: now.getMonth(), dayIdx: now.getDate() - 1 };
-    }, [year]);
+        return {
+            year: now.getFullYear(),
+            monthIdx: now.getMonth(),
+            dayIdx: now.getDate() - 1,
+        };
+    }, []);
+    const yearWithDetails = useMemo(() => {
+        const { year } = today;
+        return {
+            year,
+            details: {
+                isLeapYear: isLeapYear(year),
+                firstWeekdayIdx: getWeekdayOfJan1(year),
+            },
+        };
+    }, [today]);
+
+    const [data, error] = useFetchCalendarData(addressId, yearWithDetails);
     return (
         <>
             <h1 className="font-medium leading-tight text-5xl mt-0 mb-2 text-green-600">Kalender</h1>

@@ -75,10 +75,11 @@ function matchTypes(types, times, time) {
     return types.filter((t) => times.get(t).has(time));
 }
 
-function buildCalendarData(times, validFromTime, year, isLeapYear, firstWeekdayIdx) {
+function buildCalendarData(times, validFromTime, year, yearDetails) {
     if (times === null) {
         return null;
     }
+    const { isLeapYear, firstWeekdayIdx } = yearDetails;
     const types = Array.from(times.keys());
     let nextWeekdayIdx = firstWeekdayIdx; // mutated inside "loop" below
     return {
@@ -97,7 +98,7 @@ function buildCalendarData(times, validFromTime, year, isLeapYear, firstWeekdayI
     };
 }
 
-async function load(url, abortController, year, isLeapYear, firstWeekdayIdx) {
+async function load(url, abortController, year, yearDetails) {
     try {
         const res = await fetch(url, abortController);
         if (res.status !== 200) {
@@ -105,21 +106,22 @@ async function load(url, abortController, year, isLeapYear, firstWeekdayIdx) {
         }
         const json = await res.json();
         let { times, validFromTime } = parse(year, json);
-        return [{ calendar: buildCalendarData(times, validFromTime, year, isLeapYear, firstWeekdayIdx) }, ''];
+        return [{ calendar: buildCalendarData(times, validFromTime, year, yearDetails) }, ''];
     } catch (e) {
         return [null, e.message || e];
     }
 }
 
-export function useFetchCalendarData(addressId, year, isLeapYear, firstWeekdayIdx) {
+export function useFetchCalendarData(addressId, yearWithDetails) {
     const [res, setRes] = useState([null, '']);
     useEffect(() => {
+        const { year, details } = yearWithDetails;
         const url = new URL(`${BACKEND_URL_BASE}/trash_calendar/${addressId}`);
         url.searchParams.append('year', year);
         const abortController = new AbortController();
         setRes([null, '']);
-        load(url, abortController, year, isLeapYear, firstWeekdayIdx).then(setRes);
+        load(url, abortController, year, details).then(setRes);
         return () => abortController.abort();
-    }, [addressId, year, isLeapYear, firstWeekdayIdx]);
+    }, [addressId, yearWithDetails]);
     return res;
 }

@@ -45,14 +45,7 @@ export default function App() {
                 )}
             </p>
             <hr />
-            {addressId && (
-                <AddressCalendar
-                    addressId={addressId}
-                    year={YEAR}
-                    isLeapYear={YEAR_IS_LEAP_YEAR}
-                    firstWeekdayIdx={YEAR_FIRST_WEEKDAY_IDX}
-                />
-            )}
+            {addressId && <AddressCalendar addressId={addressId} />}
             {addressError && <div>Address error: {addressError}</div>}
         </div>
     );
