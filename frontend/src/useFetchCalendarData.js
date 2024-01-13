@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BACKEND_URL_BASE, MONTH_NAMES } from './config';
+import { getWeekdayOfJan1, isLeapYear } from './time';
 
 function parsePatchedDate(year, monthDay) {
     // Parsing numbers instead of using `Date.parse(`${year}-${monthDay}`)` because the lack of leading zeros
@@ -75,16 +76,18 @@ function matchTypes(types, times, time) {
     return types.filter((t) => times.get(t).has(time));
 }
 
-function buildCalendarData(times, validFromTime, year, yearDetails) {
+function buildCalendarData(times, validFromTime, year) {
     if (times === null) {
         return null;
     }
-    const { isLeapYear, firstWeekdayIdx } = yearDetails;
+
     const types = Array.from(times.keys());
-    let nextWeekdayIdx = firstWeekdayIdx; // mutated inside "loop" below
+    const yearIsLeapYear = isLeapYear(year);
+    let nextWeekdayIdx = getWeekdayOfJan1(year); // mutated inside "loop" below
     return {
+        year,
         months: Array.from(MONTH_NAMES, (_, monthIdx) =>
-            Array.from({ length: daysInMonth(monthIdx, isLeapYear) }, (_, dayIdx) => {
+            Array.from({ length: daysInMonth(monthIdx, yearIsLeapYear) }, (_, dayIdx) => {
                 const time = Date.UTC(year, monthIdx, dayIdx + 1);
                 return {
                     dayIdx,
@@ -98,30 +101,34 @@ function buildCalendarData(times, validFromTime, year, yearDetails) {
     };
 }
 
-async function load(url, abortController, year, yearDetails) {
+async function load(url, abortController, year) {
     try {
         const res = await fetch(url, abortController);
-        if (res.status !== 200) {
-            throw new Error(`calendar data lookup failed with HTTP status ${res.status} ${res.statusText}`);
+        switch (res.status) {
+            case 200:
+                break; // OK
+            case 404:
+                throw new Error(`calendar data not found for the address in the given year`);
+            default:
+                throw new Error(`calendar data lookup failed with HTTP status ${res.status} ${res.statusText}`);
         }
-        const json = await res.json();
-        let { times, validFromTime } = parse(year, json);
-        return [{ calendar: buildCalendarData(times, validFromTime, year, yearDetails) }, ''];
+        const data = await res.json();
+        let { times, validFromTime } = parse(year, data);
+        return [{ calendar: buildCalendarData(times, validFromTime, year) }, ''];
     } catch (e) {
         return [null, e.message || e];
     }
 }
 
-export function useFetchCalendarData(addressId, yearWithDetails) {
+export function useFetchCalendarData(addressId, year) {
     const [res, setRes] = useState([null, '']);
     useEffect(() => {
-        const { year, details } = yearWithDetails;
         const url = new URL(`${BACKEND_URL_BASE}/trash_calendar/${addressId}`);
         url.searchParams.append('year', year);
         const abortController = new AbortController();
         setRes([null, '']);
-        load(url, abortController, year, details).then(setRes);
+        load(url, abortController, year).then(setRes);
         return () => abortController.abort();
-    }, [addressId, yearWithDetails]);
+    }, [addressId, year]);
     return res;
 }

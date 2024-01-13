@@ -6,7 +6,7 @@ import { DAWA_KOMMUNEKODE, DAWA_URL_QUERY_ADDRESS } from './config';
 
 export function useDawaAutocomplete(inputRef) {
     const [selectedAddress, setSelectedAddress] = useState(); // TODO Use 'useEffect' to refresh on change..?
-    const { address } = useParams(); // fetch 'address' URL parameter
+    const { address } = useParams(); // fetch 'address' URL path parameter (route defined in 'index.js')
     useEffect(() => {
         if (address) {
             const url = new URL(DAWA_URL_QUERY_ADDRESS);
@@ -19,21 +19,19 @@ export function useDawaAutocomplete(inputRef) {
                     }
                     return res.json();
                 })
-                .then((res) => {
-                    if (res.length < 1) {
+                .then((data) => {
+                    if (data.length < 1) {
                         throw new Error('no matching address found');
                     }
-                    return res[0].adgangsadresse;
-                })
-                .then(({ vejstykke, husnr, postnummer, adressebetegnelse }) =>
+                    const { vejstykke, husnr, postnummer, adressebetegnelse } = data[0].adgangsadresse;
                     setSelectedAddress({
                         vejnavn: vejstykke.navn,
                         husnr,
                         postnr: postnummer.nr,
                         postnrnavn: postnummer.navn,
                         tekst: adressebetegnelse,
-                    })
-                )
+                    });
+                })
                 .catch(console.error);
             return () => abortController.abort();
         }
@@ -44,15 +42,18 @@ export function useDawaAutocomplete(inputRef) {
         const res = dawaAutocomplete(inputRef.current, {
             params: { kommunekode: DAWA_KOMMUNEKODE },
             select: (r) => {
-                // HACK to prevent DAWA from screwing up in a minor way,
+                // Set "address" path component in URL while keeping query params ("year", specifically).
+                // TODO: Try and use React Router "correctly".
+                // HACK Wrapped in timeout to prevent DAWA from screwing up in a minor way,
                 //      where it adds a comma and leaves the cursor to input another
                 //      address component.
                 //      This wasn't a problem before we started to use React Router,
                 //      but it seems like putting the call in a timeout solves it...
-                setTimeout(() => navigate(`/${r.tekst}`));
+                //      TODO: This still is a problem...
+                setTimeout(() => navigate(`/${r.tekst}${window.location.search}`));
             },
         });
-        return res.destroy;
+        return () => res.destroy();
     }, [inputRef, navigate]);
     return { selectedAddress };
 }

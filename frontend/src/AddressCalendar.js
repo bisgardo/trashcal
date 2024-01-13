@@ -1,5 +1,4 @@
 import { Calendar } from './Calendar';
-import { getWeekdayOfJan1, isLeapYear } from './time';
 import { useFetchCalendarData } from './useFetchCalendarData';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -21,28 +20,9 @@ const TYPE_NAMES = {
     r: 'Restaffald',
 };
 
-export function AddressCalendar({ addressId }) {
+export function AddressCalendar({ addressId, year, today }) {
     // TODO Show spinner or loading message while loading.
-    const today = useMemo(() => {
-        const now = new Date();
-        return {
-            year: now.getFullYear(),
-            monthIdx: now.getMonth(),
-            dayIdx: now.getDate() - 1,
-        };
-    }, []);
-    const yearWithDetails = useMemo(() => {
-        const { year } = today;
-        return {
-            year,
-            details: {
-                isLeapYear: isLeapYear(year),
-                firstWeekdayIdx: getWeekdayOfJan1(year),
-            },
-        };
-    }, [today]);
-
-    const [data, error] = useFetchCalendarData(addressId, yearWithDetails);
+    const [data, error] = useFetchCalendarData(addressId, year);
     return (
         <>
             <h1 className="font-medium leading-tight text-5xl mt-0 mb-2 text-green-600">Kalender</h1>
@@ -61,7 +41,7 @@ function CalendarOrError({ calendar, today }) {
     );
 }
 
-function CalendarWithLegend({ months, types, typeNames, today }) {
+function CalendarWithLegend({ year, months, types, typeNames, today }) {
     const [disabledTypes, setDisabledTypes] = useState(new Set());
     const selectedTypeNames = useMemo(() => {
         const res = new Map(Object.entries(typeNames));
@@ -76,7 +56,7 @@ function CalendarWithLegend({ months, types, typeNames, today }) {
                 disabledTypes={disabledTypes}
                 setDisabledTypes={setDisabledTypes}
             />
-            <Calendar months={months} typeNames={selectedTypeNames} today={today} />
+            <Calendar year={year} months={months} typeNames={selectedTypeNames} today={today} />
         </>
     );
 }
@@ -102,16 +82,12 @@ function CalendarLegend({ types, typeNames, disabledTypes, setDisabledTypes }) {
                     colorClass += '-disabled';
                 }
                 return (
-                    <>
-                        <dt key={`color-${t}`} className={`w-4 h-4 inline-block align-middle mr-1 ${colorClass}`}></dt>
-                        <dd
-                            key={`name-${t}`}
-                            className="inline-block align-middle mr-6 cursor-pointer"
-                            onClick={() => toggleType(t)}
-                        >
+                    <span key={t}>
+                        <dt className={`w-4 h-4 inline-block align-middle mr-1 ${colorClass}`}></dt>
+                        <dd className="inline-block align-middle mr-6 cursor-pointer" onClick={() => toggleType(t)}>
                             {typeNames[t]}
                         </dd>
-                    </>
+                    </span>
                 );
             })}
         </dl>

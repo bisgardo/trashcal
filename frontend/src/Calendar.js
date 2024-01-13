@@ -52,9 +52,9 @@ export function CalendarDay({ dayNum, weekdayIdx, matchedTypes, typeNames, isVal
     );
 }
 
-function CalendarMonth({ monthIdx, data, typeNames, today }) {
+function CalendarMonth({ year, monthIdx, data, typeNames, today }) {
     // The index of today's day in month if today is in that month and 'false' otherwise.
-    const todayDayIdx = today.monthIdx === monthIdx && today.dayIdx;
+    const todayDayIdx = today.year === year && today.monthIdx === monthIdx && today.dayIdx;
     return (
         <div>
             <h3 className="font-bold">{MONTH_NAMES[monthIdx]}</h3>
@@ -73,11 +73,18 @@ function CalendarMonth({ monthIdx, data, typeNames, today }) {
     );
 }
 
-export function Calendar({ months, typeNames, today }) {
+export function Calendar({ year, months, typeNames, today }) {
     return (
         <div className="grid lg:grid-cols-12 md:grid-cols-6 sm:grid-cols-3 gap-4">
             {months.map((days, monthIdx) => (
-                <CalendarMonth key={monthIdx} monthIdx={monthIdx} data={days} typeNames={typeNames} today={today} />
+                <CalendarMonth
+                    key={monthIdx}
+                    year={year}
+                    monthIdx={monthIdx}
+                    data={days}
+                    typeNames={typeNames}
+                    today={today}
+                />
             ))}
         </div>
     );
