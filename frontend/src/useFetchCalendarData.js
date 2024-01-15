@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BACKEND_URL_BASE, MONTH_NAMES } from './config';
-import { getWeekdayOfJan1, isLeapYear } from './time';
+import { dayOfWeekOfJan1, isLeapYear } from './time';
 
 function parsePatchedDate(year, monthDay) {
     // Parsing numbers instead of using `Date.parse(`${year}-${monthDay}`)` because the lack of leading zeros
@@ -83,7 +83,7 @@ function buildCalendarData(times, validFromTime, year) {
 
     const types = Array.from(times.keys());
     const yearIsLeapYear = isLeapYear(year);
-    let nextWeekdayIdx = getWeekdayOfJan1(year); // mutated inside "loop" below
+    let nextWeekdayIdx = dayOfWeekOfJan1(year); // mutated inside "loop" below
     return {
         year,
         months: Array.from(MONTH_NAMES, (_, monthIdx) =>
